@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="scripts/main.js" type="module" defer></script>
+    <title>blocks</title>
+</head>
+
+<body>
+
+    <div class="menu" id="main-menu">
+        <button class="menu-option free-button">Free Play</button>
+        <button class="menu-option sprint-button">Sprint</button>
+        <button class="menu-option b2b-button">B2B Practice</button>
+        <button class="menu-option controls-button">Controls</button>
+        <button class="menu-option handling-button">Handling</button>
+    </div>
+
+    <div class="menu" id="controls-menu">
+        <button class="menu-option keybind-option" id="pause">Pause / Play<span></span></button>
+        <button class="menu-option keybind-option" id="restart">Restart<span></span></button>
+        <button class="menu-option keybind-option" id="undo">Undo<span></span></button>
+        <button class="menu-option keybind-option" id="redo">Redo<span></span></button>
+        <button class="menu-option keybind-option" id="left">Left<span></span></button>
+        <button class="menu-option keybind-option" id="right">Right<span></span></button>
+        <button class="menu-option keybind-option" id="down">Down<span></span></button>
+        <button class="menu-option keybind-option" id="drop">Hard Drop<span></span></button>
+        <button class="menu-option keybind-option" id="clockwise">Right Spin<span></span></button>
+        <button class="menu-option keybind-option" id="counterClockwise">Left Spin<span></span></button>
+        <button class="menu-option keybind-option" id="oneEighty">180 Spin<span></span></button>
+        <button class="menu-option keybind-option" id="hold">Hold<span></span></button>
+        <button class="menu-option controls-done">Done</button>
+    </div>
+
+    <div class="menu" id="handling-menu">
+        <div class="menu-option">
+            <label for="DAS">DAS:</label>
+            <input type="text" placeholder="100" value="100" id="DAS" autocomplete="off">
+        </div>
+        <div class="menu-option">
+            <label for="ARR">ARR:</label>
+            <input type="text" placeholder="0" value="0" id="ARR" autocomplete="off">
+        </div>
+        <div class="menu-option">
+            <label for="SDF">SDF:</label>
+            <input type="text" placeholder="Infinity" value="Infinity" id="SDF" autocomplete="off">
+        </div>
+        <button class="menu-option handling-done">Done</button>
+    </div>
+
+    <div class="menu" id="edit-queue-menu">
+        <div class="menu-option">
+            <label for="hold-queue">Hold:</label>
+            <input type="text" id="hold-queue" autocomplete="off">
+        </div>
+        <div class="menu-option">
+            <label for="next-queue">Next:</label>
+            <input type="text" id="next-queue" autocomplete="off">
+        </div>
+        <button class="menu-option edit-queue-done">Done</button>
+    </div>
+
+    <div class="menu" id="results-menu">
+        <div class="menu-option result">
+            <p class="result-title">Lines Cleared</p>
+            <p class="result-item" id="result-lines"></p>
+        </div>
+        <div class="menu-option result">
+            <p class="result-title">Max B2B</p>
+            <p class="result-item" id="result-b2b"></p>
+        </div>
+        <div class="menu-option result">
+            <p class="result-title">Max Combo</p>
+            <p class="result-item" id="result-combo"></p>
+        </div>
+        <div class="menu-option result">
+            <p class="result-title">Pieces</p>
+            <p class="result-item" id="result-pieces"></p>
+            <p class="result-item" id="result-pps"></p>
+        </div>
+        <div class="menu-option result">
+            <p class="result-title">Attack</p>
+            <p class="result-item" id="result-attack"></p>
+            <p class="result-item" id="result-apm"></p>
+        </div>
+        <div class="menu-option result">
+            <p class="result-title">Time</p>
+            <p class="result-item" id="result-time"></p>
+        </div>
+        <button class="menu-option result-menu">Menu</button>
+        <button class="menu-option result-retry">Retry</button>
+    </div>
+
+
+    <div class="game-container">
+        <div id="countdown-container">
+            <div id="countdown"></div>
+        </div>
+        <div id="holdPiece"></div>
+        <div id="grid-overflow"></div>
+        <div id="grid"></div>
+        <div id="next"></div>
+        <div id="stats-container">
+            <div class="stat">
+                <p class="stat-title">Lines</p>
+                <p class="stat-item" id="lines">0</p>
+            </div>
+            <div class="stat">
+                <p class="stat-title">B2B</p>
+                <p class="stat-item" id="b2b">0</p>
+            </div>
+            <div class="stat">
+                <p class="stat-title">Combo</p>
+                <p class="stat-item" id="combo">0</p>
+            </div>
+            <div class="stat">
+                <p class="stat-title">Pieces</p>
+                <p class="stat-item" id="pieces">0</p>
+                <p class="stat-item" id="pps">0</p>
+            </div>
+            <div class="stat">
+                <p class="stat-title">Attack</p>
+                <p class="stat-item" id="attack">0</p>
+                <p class="stat-item" id="apm">0</p>
+            </div>
+            <div class="stat">
+                <p class="stat-title">Time</p>
+                <p class="stat-item" id="timer">00:00:00</p>
+            </div>
+        </div>
+        <button class="game-menu-button">Menu</button>
+        <button class="game-controls-button">Controls</button>
+    </div>
+
+</body>
+
+</html>
