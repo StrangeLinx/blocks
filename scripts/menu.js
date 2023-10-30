@@ -169,7 +169,14 @@ export default class Menu {
         for (let i = 0; i < this.keybindButtons.length; i++) {
             let span = this.keybindButtons[i].querySelector("span");
             let key = this.controls.keybind(this.keybindButtons[i].id);
+
+            // When key is space, make it apparent
+            if (key === " ") {
+                key = "Space"
+            }
+
             span.innerHTML = key;
+
             if (key === undefined) {
                 span.classList.add("invalid");
             } else {
@@ -300,6 +307,7 @@ export default class Menu {
             this.activeKeybindButton.classList.remove("pending-user-input");
             this.activeKeybindButton = "";
             this.addCurrentKeybindsToControlsMenu();
+            this.unfocusKeybindOption();
         } else if (this.inputFocused()) {
             // Prevent previous screen if a user is typing
             // User is permitted to have restart set to "i". This prevents potential interruption when typing into an input field
@@ -310,6 +318,14 @@ export default class Menu {
             while (this.activeMenu) {
                 this.previousScreen();
             }
+        }
+    }
+
+    unfocusKeybindOption() {
+        // Ensure button is unfocused - "space" focuses element
+        let e = document.activeElement;
+        if (e.classList.value.includes("keybind-option")) {
+            e.blur()
         }
     }
 
