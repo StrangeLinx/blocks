@@ -72,18 +72,7 @@ export default class Controls {
             "Undo": ["Control", "z"],
             "Redo": ["Control", "y"]
         };
-        this.pressed = {};
-        for (let control of Object.keys(this.controls)) {
-            let currKeys = this.controls[control];
-            if (Array.isArray(currKeys)) {
-                for (let key of currKeys) {
-                    this.pressed[key] = false;
-                }
-            }
-            else {
-                this.pressed[currKeys] = false;
-            }
-        }
+        this.createPressed();
     }
 
     createPressed() {
@@ -134,12 +123,14 @@ export default class Controls {
                     }
                     if (allPressed) {
                         highest = control;
+                        highestLength = currKeys.length;
                     }
                 }
             // Otherwise, if the current key is the input key, then return the control
             } else if (key == currKeys) {
                 if (highestLength == 0) {
                     highest = control;
+                    highestLength = 1;
                 }
             }
         }
@@ -195,14 +186,12 @@ export default class Controls {
     }
 
     press(key) {
-        console.log(this.controls);
-        console.log(this.pressed);
+
         if (!(key in this.pressed)) {
             return;
         }
         let action = this.getControl(key);
         
-        console.log(action);
         // Prevent event listener's repeat
         if (this.pressed[key]) {
             return;
