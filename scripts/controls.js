@@ -44,6 +44,15 @@ export default class Controls {
             return;
         }
 
+        let version = localStorage.getItem("version");
+
+        if (version !== "1.1") {
+            localStorage.setItem("version", "1.1");
+            this.loadDefaultKeybinds();
+            this.saveUserKeybindPreferences();
+            return;
+        }
+
         let controls = JSON.parse(localStorage.getItem("controls"));
         let pressed = JSON.parse(localStorage.getItem("pressed"));
 
@@ -126,7 +135,7 @@ export default class Controls {
                         highestLength = currKeys.length;
                     }
                 }
-            // Otherwise, if the current key is the input key, then return the control
+                // Otherwise, if the current key is the input key, then return the control
             } else if (key == currKeys) {
                 if (highestLength == 0) {
                     highest = control;
@@ -191,7 +200,7 @@ export default class Controls {
             return;
         }
         let action = this.getControl(key);
-        
+
         // Prevent event listener's repeat
         if (this.pressed[key]) {
             return;
@@ -201,7 +210,7 @@ export default class Controls {
         if (!action) {
             return;
         }
-        
+
         let move = this.moves[action];
         if (action === "Left") {
             this.left(move);
@@ -223,7 +232,7 @@ export default class Controls {
             return;
         }
         let action = this.getControl(key);
-        
+
         this.pressed[key] = false;
         // validate
         if (!action) {
@@ -244,7 +253,7 @@ export default class Controls {
             clearInterval(this.redoInterval);
         }
 
-        
+
     }
 
     left(move) {
