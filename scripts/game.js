@@ -55,47 +55,44 @@ export default class Game {
         if (this.sandboxMove(move)) {
             return;
         }
-
         if (move.type === "restart") {
             this.restart(true);
             return;
-
-        } else if (move.type === "pause") {
-            this.pause();
-
-        } else if (this.countingDown || this.paused) {
-            // don't allow game play during 2 second count down or while paused
-            return;
-
-        } else if (move.type === "shift") {
-            this.shift(move.x, move.y);
-
-        } else if (move.type === "shiftFloor") { // Infinite soft drop
-            this.shiftFloor();
-
-        } else if (move.type === "leftWall") {
-            this.leftWall();
-
-        } else if (move.type === "rightWall") {
-            this.rightWall();
-
-        } else if (move.type === "drop") { // hard drop
-            this.drop();
-
-        } else if (move.type === "rot") {
-            this.rotate(move.r);
-
-        } else if (move.type === "hold") {
-            this.hold();
-
-        } else if (move.type === "undo") {
-            this.undo();
-
-        } else if (move.type === "redo") {
-            this.redo();
-
         }
-
+        else if (move.type === "pause") {
+            this.pause();
+        }
+        // don't allow game play during 2 second count down or while paused
+        else if (this.countingDown || this.paused) {
+            return;
+        }
+        else if (move.type === "shift") {
+            this.shift(move.x, move.y);
+        }
+        else if (move.type === "shiftFloor") { // Infinite soft drop
+            this.shiftFloor();
+        }
+        else if (move.type === "leftWall") {
+            this.leftWall();
+        }
+        else if (move.type === "rightWall") {
+            this.rightWall();
+        }
+        else if (move.type === "drop") { // hard drop
+            this.drop();
+        }
+        else if (move.type === "rot") {
+            this.rotate(move.r);
+        }
+        else if (move.type === "hold") {
+            this.hold();
+        }
+        else if (move.type === "undo") {
+            this.undo();
+        }
+        else if (move.type === "redo") {
+            this.redo();
+        }
     }
 
     sandbox() {
@@ -126,9 +123,10 @@ export default class Game {
             this.new();
             this.gameMode = mode;
             this.save.clear();
+        }
 
-        } else if (this.over) {
-            // Same mode and game over then restart
+        // Same mode and game over then restart
+        else if (this.over) {
             this.new();
         }
 
