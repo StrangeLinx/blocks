@@ -106,7 +106,18 @@ export default class Game {
         // Validation for sandbox mode is performed in call origin
         if (move.type === "fillSquare") {
             this.fillSquare(move.pieceType, move.x, move.y);
+            return true;
         }
+        if (move.type === "editHold") {
+            this.updateHold(move.piece);
+            return true;
+        }
+        if (move.type === "editNext") {
+            this.updateNext(move.pieces);
+            return true;
+        }
+
+        return false;
     }
 
     play(mode) {

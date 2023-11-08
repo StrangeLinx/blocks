@@ -230,9 +230,15 @@ export default class Menu {
         // Add to queue
         ev.target.classList.remove("invalid");
         if (hold) {
-            this.game.updateHold(value);
+            this.game.update({
+                type: "editHold",
+                piece: value
+            });
         } else {
-            this.game.updateNext(value);
+            this.game.update({
+                type: "editNext",
+                pieces: value
+            });
         }
     }
 
