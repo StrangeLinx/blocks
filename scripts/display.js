@@ -198,9 +198,19 @@ export default class Display {
         let y = 20 - cell.style.gridRowStart + yOffset;
 
         if (this.triggerFill) {
-            this.game.fillSquare("g", x, y);
+            this.game.update({
+                type: "fillSquare",
+                pieceType: "g",
+                x: x,
+                y: y,
+            });
         } else if (this.triggerClear) {
-            this.game.fillSquare("", x, y);
+            this.game.update({
+                type: "fillSquare",
+                pieceType: "",
+                x: x,
+                y: y,
+            });
         }
     }
 

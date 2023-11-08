@@ -13,7 +13,6 @@ export default class Game {
 
         this.new();
 
-
         // Default game mode is free play
         this.gameMode = "free";
 
@@ -90,6 +89,9 @@ export default class Game {
 
         } else if (move.type === "redo") {
             this.redo();
+
+        } else if (move.type === "fillSquare") {
+            this.fillSquare(move.pieceType, move.x, move.y);
         }
 
     }
