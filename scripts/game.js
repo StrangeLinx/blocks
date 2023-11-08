@@ -118,6 +118,15 @@ export default class Game {
     }
 
     play(mode) {
+        this.updateMode(mode);
+
+        // Unpause and start countdown
+        this.paused = false;
+        clearTimeout(this.countdownTimeout);
+        this.countdown();
+    }
+
+    updateMode(mode) {
         // Changing game modes
         if (mode && this.gameMode !== mode) {
             this.new();
@@ -129,11 +138,6 @@ export default class Game {
         else if (this.over) {
             this.new();
         }
-
-        // Unpause and start countdown
-        this.paused = false;
-        clearTimeout(this.countdownTimeout);
-        this.countdown();
     }
 
     pause() {
@@ -147,7 +151,7 @@ export default class Game {
         this.paused = true;
         this.updatedPause = true;
 
-        // track game play time
+        // Track game play time
         if (this.startTime) { // populated when previously paused
             this.timeElapsed = Date.now() - this.startTime;
         } else {
@@ -169,14 +173,18 @@ export default class Game {
 
         this.countdownTimeout = setTimeout(() => {
             this.countingDown = false;
-            this.startTime = Date.now() - this.timeElapsed;
-            this.updatedStartTime = true;
+            this.updateStartTime();
         }, 2000);
+    }
+
+    updateStartTime() {
+        this.startTime = Date.now() - this.timeElapsed;
+        this.updatedStartTime = true;
     }
 
     shift(x, y) {
         // Shift piece
-        let shiftedPiece = this.bag.cloneCurrentPiece();
+        const shiftedPiece = this.bag.cloneCurrentPiece();
         shiftedPiece.shift(x, y);
 
         // Check it's a valid move
@@ -236,7 +244,7 @@ export default class Game {
     drop() {
         this.saveState();
 
-        let piece = this.bag.place();
+        const piece = this.bag.place();
 
         // Move piece down then place
         this.calculateDrop(piece);
@@ -254,7 +262,6 @@ export default class Game {
 
         this.setUpdatedGrid(true);
         this.setUpdatedNext(true);
-
 
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
@@ -319,7 +326,7 @@ export default class Game {
     }
 
     rotate(r) {
-        let rotatedPiece = this.bag.cloneCurrentPiece();
+        const rotatedPiece = this.bag.cloneCurrentPiece();
 
         // O piece only has 1 rotation
         if (rotatedPiece.type === "o") {
@@ -340,12 +347,12 @@ export default class Game {
         // If current rotation is not valid try "kicks" from the corresponding kick table
         let currentRotation = this.bag.getCurrentPiece().getRotate();
         let newRotation = rotatedPiece.getRotate();
-        let table = this.kick.table(rotatedPiece.type, currentRotation, newRotation);
+        const table = this.kick.table(rotatedPiece.type, currentRotation, newRotation);
 
         let i = 0;
         while (i < table.length) {
             // Kick
-            let kickedPiece = this.bag.clonePiece(rotatedPiece);
+            const kickedPiece = this.bag.clonePiece(rotatedPiece);
             kickedPiece.shift(table[i][0], table[i][1]);
 
             // Check if it's a valid kick
@@ -465,19 +472,21 @@ export default class Game {
     checkGameOver() {
         // Win if cleared 40 lines in sprint mode
         if (this.gameMode === "sprint" && this.linesCleared >= 40) {
-            this.pause();
-            this.over = true;
-            this.updatedGameOver = true;
+            this.gameOver();
             return;
         }
 
         // Lose if topped out
-        let piece = this.bag.getCurrentPiece();
+        const piece = this.bag.getCurrentPiece();
         if (!this.grid.valid(piece)) {
-            this.pause();
-            this.over = true;
-            this.updatedGameOver = true;
+            this.gameOver();
         }
+    }
+
+    gameOver() {
+        this.pause();
+        this.over = true;
+        this.updatedGameOver = true;
     }
 
     saveState() {
@@ -567,7 +576,7 @@ export default class Game {
     }
 
     getDropPreview() {
-        let piece = this.bag.cloneCurrentPiece();
+        const piece = this.bag.cloneCurrentPiece();
         this.calculateDrop(piece);
         piece.type = "preview";
         return piece;
