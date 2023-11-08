@@ -57,7 +57,6 @@ export default class Display {
         this.timerDisplay = document.querySelector("#timer");
         this.timerInterval;
         this.startTime;
-        this.previousTimeElapsed = 0;
 
         // Countdown
         this.countdownContainer = document.querySelector("#countdown-container");
@@ -337,7 +336,6 @@ export default class Display {
             count--;
             this.countTransition(count);
             if (count <= 0) {
-                this.startStats();
                 clearInterval(this.countdownInterval);
                 this.finalCountTransition();
             }
@@ -358,7 +356,6 @@ export default class Display {
 
     resetTimer() {
         clearInterval(this.timerInterval);
-        this.previousTimeElapsed = 0;
         this.timerDisplay.innerHTML = "00:00:00";
     }
 
@@ -389,7 +386,7 @@ export default class Display {
     }
 
     startStats() {
-        this.startTime = Date.now() - this.previousTimeElapsed;
+        clearInterval(this.timerInterval);
 
         this.timerInterval = setInterval(() => {
             let milliseconds = Date.now() - this.startTime;
@@ -403,15 +400,10 @@ export default class Display {
 
     stopStats() {
         clearInterval(this.timerInterval);
-        if (this.startTime) {
-            this.previousTimeElapsed = Date.now() - this.startTime;
-        } else {
-            this.previousTimeElapsed = 0;
-        }
     }
 
-    updateStartTime(start) {
-        this.startTime = start;
+    updateStartTime(startTime) {
+        this.startTime = startTime;
     }
 
     updateTimer(milliseconds) {

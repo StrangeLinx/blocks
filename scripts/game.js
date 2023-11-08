@@ -45,7 +45,6 @@ export default class Game {
         this.over = false;
 
         this.startTime = "";
-        this.updatedStartTime = true;
         this.restartTimer = true;
         this.timeElapsed = 0;
 
@@ -120,10 +119,14 @@ export default class Game {
     play(mode) {
         this.updateMode(mode);
 
-        // Unpause and start countdown
         this.paused = false;
-        clearTimeout(this.countdownTimeout);
-        this.countdown();
+
+        if (this.gameMode === "sprint") {
+            clearTimeout(this.countdownTimeout);
+            this.countdown();
+        } else {
+            this.updateStartTime();
+        }
     }
 
     updateMode(mode) {
@@ -179,7 +182,7 @@ export default class Game {
 
     updateStartTime() {
         this.startTime = Date.now() - this.timeElapsed;
-        this.updatedStartTime = true;
+        this.displayStartTimer = true;
     }
 
     shift(x, y) {
@@ -602,7 +605,16 @@ export default class Game {
         this.startCountdown = update;
     }
 
+    getStartTimer() {
+        return this.displayStartTimer;
+    }
+
+    setStartTimer(update) {
+        this.displayStartTimer = update;
+    }
+
     getResetTimer() {
+        // Timer is reset when a new game is started (new game, user restart, game over)
         let restart = this.restartTimer;
         this.restartTimer = false;
         return restart;
@@ -640,14 +652,6 @@ export default class Game {
 
     getTimeElapsed() {
         return this.timeElapsed;
-    }
-
-    getUpdatedStartTime() {
-        return this.updatedStartTime;
-    }
-
-    setUpdatedStartTime(updated) {
-        this.updatedStartTime = updated;
     }
 
     getResults() {

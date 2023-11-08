@@ -29,9 +29,10 @@ function update() {
         display.setShowEditQueueMenu(false);
     }
 
-    if (game.getUpdatedStartTime()) {
-        display.updateStartTime(game.getStartTime()); // Synchronize time
-        game.setUpdatedStartTime(false);
+    if (game.getStartTimer()) {
+        display.updateStartTime(game.getStartTime());  // Synchronize time
+        display.startStats();
+        game.setStartTimer(false);
     }
 
 }
