@@ -172,7 +172,7 @@ export default class Menu {
 
             // When key is space, make it apparent
             if (key === " ") {
-                key = "Space"
+                key = "Space";
             }
 
             span.innerHTML = key;
@@ -233,7 +233,6 @@ export default class Menu {
             this.game.updateHold(value);
         } else {
             this.game.updateNext(value);
-            this.addNextPiecesToMenu();
         }
     }
 
@@ -325,7 +324,7 @@ export default class Menu {
         // Ensure button is unfocused - "space" focuses element
         let e = document.activeElement;
         if (e.classList.value.includes("keybind-option")) {
-            e.blur()
+            e.blur();
         }
     }
 
