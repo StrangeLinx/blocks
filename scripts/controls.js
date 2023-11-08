@@ -22,18 +22,18 @@ export default class Controls {
 
     createMoves() {
         this.moves = {
-            left: { type: "shift", x: -1, y: 0 },
-            right: { type: "shift", x: 1, y: 0 },
-            down: { type: "shift", x: 0, y: -1 },
-            drop: { type: "drop" },
-            clockwise: { type: "rot", r: 1 },
-            counterClockwise: { type: "rot", r: -1 },
-            oneEighty: { type: "rot", r: 2 },
-            hold: { type: "hold" },
-            restart: { type: "restart" },
-            pause: { type: "pause" },
-            undo: { type: "undo" },
-            redo: { type: "redo" }
+            "Left": { type: "shift", x: -1, y: 0 },
+            "Right": { type: "shift", x: 1, y: 0 },
+            "Soft Drop": { type: "shift", x: 0, y: -1 },
+            "Hard Drop": { type: "drop" },
+            "Rotate CW": { type: "rot", r: 1 },
+            "Rotate CCW": { type: "rot", r: -1 },
+            "Rotate 180": { type: "rot", r: 2 },
+            "Hold": { type: "hold" },
+            "Restart": { type: "restart" },
+            "Pause": { type: "pause" },
+            "Undo": { type: "undo" },
+            "Redo": { type: "redo" }
         };
     }
 
@@ -58,33 +58,92 @@ export default class Controls {
 
     loadDefaultKeybinds() {
         this.controls = {
-            ArrowLeft: "left",
-            ArrowRight: "right",
-            ArrowDown: "down",
-            c: "drop",
-            ArrowUp: "clockwise",
-            x: "counterClockwise",
-            Shift: "oneEighty",
-            z: "hold",
-            r: "restart",
-            Escape: "pause",
-            q: "undo",
-            w: "redo"
+            "Left": "ArrowLeft",
+            "Right": "ArrowRight",
+            "Soft Drop": "ArrowDown",
+            // Spacebar
+            "Hard Drop": " ",
+            "Rotate CW": "x",
+            "Rotate CCW": "z",
+            "Rotate 180": "a",
+            "Hold": "c",
+            "Restart": "r",
+            "Pause": "Escape",
+            "Undo": ["Control", "z"],
+            "Redo": ["Control", "y"]
         };
+        this.pressed = {};
+        for (let control of Object.keys(this.controls)) {
+            let currKeys = this.controls[control];
+            if (Array.isArray(currKeys)) {
+                for (let key of currKeys) {
+                    this.pressed[key] = false;
+                }
+            }
+            else {
+                this.pressed[currKeys] = false;
+            }
+        }
+    }
 
-        this.pressed = {
-            ArrowLeft: false,
-            ArrowRight: false,
-            ArrowDown: false,
-            c: false,
-            ArrowUp: false,
-            x: false,
-            Shift: false,
-            z: false,
-            r: false,
-            q: false,
-            w: false
-        };
+    createPressed() {
+        this.pressed = {};
+        for (let control of Object.keys(this.controls)) {
+            let currKeys = this.controls[control];
+            if (Array.isArray(currKeys)) {
+                for (let key of currKeys) {
+                    this.pressed[key] = false;
+                }
+            }
+            else {
+                this.pressed[currKeys] = false;
+            }
+        }
+    }
+
+    /**
+     * Determines whether the pressing of a key will result in a control being activated
+     * Prioritizes controls which activate the most number of keys
+     * For example, ctrl+z is prioritized over z
+     * If so, it returns the activated control
+     * Otherwise, returns false
+     * @param {string} key 
+     * @returns {string} control
+     */
+    getControl(key) {
+        let highestLength = 0;
+        let highest = false;
+        for (let control of Object.keys(this.controls)) {
+            let currKeys = this.controls[control];
+            // If multiple keys must be pressed in order to execute the control, then
+            // Only allow the control if the pressing of this key will result in all keys being pressed
+            if (Array.isArray(currKeys)) {
+                if (currKeys.length <= highestLength) {
+                    continue;
+                }
+                if (currKeys.includes(key)) {
+                    let allPressed = true;
+                    for (let currKey of currKeys) {
+                        if (currKey === key) {
+                            continue;
+                        }
+                        if (!this.pressed[currKey]) {
+                            allPressed = false;
+                            break;
+                        }
+                    }
+                    if (allPressed) {
+                        highest = control;
+                    }
+                }
+            // Otherwise, if the current key is the input key, then return the control
+            } else if (key == currKeys) {
+                if (highestLength == 0) {
+                    highest = control;
+                }
+            }
+        }
+        return highest;
     }
 
     loadUserHandlingPreferences() {
@@ -136,29 +195,34 @@ export default class Controls {
     }
 
     press(key) {
-        let action = this.controls[key];
-
-        // Ensure it's a valid key press
-        if (!action) {
+        console.log(this.controls);
+        console.log(this.pressed);
+        if (!(key in this.pressed)) {
             return;
         }
-
+        let action = this.getControl(key);
+        
+        console.log(action);
         // Prevent event listener's repeat
         if (this.pressed[key]) {
             return;
         }
         this.pressed[key] = true;
-
+        // Ensure it's a valid key press
+        if (!action) {
+            return;
+        }
+        
         let move = this.moves[action];
-        if (action === "left") {
+        if (action === "Left") {
             this.left(move);
-        } else if (action === "right") {
+        } else if (action === "Right") {
             this.right(move);
-        } else if (action === "down") {
+        } else if (action === "Soft Drop") {
             this.down(move);
-        } else if (action === "undo") {
+        } else if (action === "Undo") {
             this.undo(move);
-        } else if (action === "redo") {
+        } else if (action === "Redo") {
             this.redo(move);
         } else {
             this.game.update(move);
@@ -166,28 +230,32 @@ export default class Controls {
     }
 
     release(key) {
-        let action = this.controls[key];
-
+        if (!(key in this.pressed)) {
+            return;
+        }
+        let action = this.getControl(key);
+        
+        this.pressed[key] = false;
         // validate
         if (!action) {
             return;
         }
 
-        if (action === "left") {
+        if (action === "Left") {
             clearTimeout(this.leftInterval);
             clearInterval(this.leftInterval);
-        } else if (action === "right") {
+        } else if (action === "Right") {
             clearTimeout(this.rightInterval);
             clearInterval(this.rightInterval);
-        } else if (action === "down") {
+        } else if (action === "Soft Drop") {
             clearInterval(this.softDropInterval);
-        } else if (action === "undo") {
+        } else if (action === "Undo") {
             clearInterval(this.undoInterval);
-        } else if (action === "redo") {
+        } else if (action === "Redo") {
             clearInterval(this.redoInterval);
         }
 
-        this.pressed[key] = false;
+        
     }
 
     left(move) {
@@ -272,21 +340,13 @@ export default class Controls {
     }
 
     keybind(move) {
-        // Find key from value
-        return Object.keys(this.controls).find(key => this.controls[key] === move);
+        return this.controls[move];
     }
 
     configureKeybind(move, newKey) {
-        // Identify replaced key
-        let oldKey = this.keybind(move);
 
-        // Remove
-        delete this.controls[oldKey];
-        delete this.pressed[oldKey];
-
-        // New keys
-        this.controls[newKey] = move;
-        this.pressed[newKey] = false;
+        this.controls[move] = newKey;
+        this.createPressed();
 
         this.saveUserKeybindPreferences();
     }
