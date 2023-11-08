@@ -52,6 +52,10 @@ export default class Game {
     }
 
     update(move) {
+        if (this.sandboxMove(move)) {
+            return;
+        }
+
         if (move.type === "restart") {
             this.restart(true);
             return;
@@ -90,14 +94,19 @@ export default class Game {
         } else if (move.type === "redo") {
             this.redo();
 
-        } else if (move.type === "fillSquare") {
-            this.fillSquare(move.pieceType, move.x, move.y);
         }
 
     }
 
     sandbox() {
         return this.gameMode === "free" || this.gameMode === "b2b";
+    }
+
+    sandboxMove(move) {
+        // Validation for sandbox mode is performed in call origin
+        if (move.type === "fillSquare") {
+            this.fillSquare(move.pieceType, move.x, move.y);
+        }
     }
 
     play(mode) {
