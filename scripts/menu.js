@@ -311,9 +311,9 @@ export default class Menu {
             // Prevent previous screen if a user is typing
             // User is permitted to have restart set to "i". This prevents potential interruption when typing into an input field
             return;
-        } else if (key === this.controls.keybind("pause")) {
+        } else if (key === this.controls.keybind("Pause")) {
             this.previousScreen();
-        } else if (key === this.controls.keybind("restart")) {
+        } else if (key === this.controls.keybind("Restart")) {
             while (this.activeMenu) {
                 this.previousScreen();
             }
