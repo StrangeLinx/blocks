@@ -142,9 +142,7 @@ export default class Display {
     }
 
     clickGrid(ev, overFlowGrid) {
-        // Only allow in free play or b2b mode
-        let mode = this.game.mode();
-        if (mode !== "free" && mode !== "b2b") {
+        if (!this.game.sandbox()) {
             return;
         }
 
@@ -160,8 +158,7 @@ export default class Display {
     }
 
     hoverGrid(ev, overFlowGrid) {
-        let mode = this.game.mode();
-        if (mode !== "free" && mode !== "b2b") {
+        if (!this.game.sandbox()) {
             return;
         }
 
@@ -221,8 +218,7 @@ export default class Display {
     }
 
     clickQueue() {
-        let mode = this.game.mode();
-        if (mode !== "free" && mode !== "b2b") {
+        if (!this.game.sandbox()) {
             return;
         }
 

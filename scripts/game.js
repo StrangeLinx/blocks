@@ -96,6 +96,10 @@ export default class Game {
 
     }
 
+    sandbox() {
+        return this.gameMode === "free" || this.gameMode === "b2b";
+    }
+
     play(mode) {
         // Changing game modes
         if (mode && this.gameMode !== mode) {
@@ -459,8 +463,8 @@ export default class Game {
     }
 
     saveState() {
-        // Only in free play or b2b mode
-        if (this.gameMode !== "free" && this.gameMode !== "b2b") {
+        // Only in sandbox mode
+        if (!this.sandbox()) {
             return;
         }
 
@@ -468,7 +472,7 @@ export default class Game {
     }
 
     undo() {
-        if (this.gameMode !== "free" && this.gameMode !== "b2b") {
+        if (!this.sandbox()) {
             return;
         }
 
@@ -476,7 +480,7 @@ export default class Game {
     }
 
     redo() {
-        if (this.gameMode !== "free" && this.gameMode !== "b2b") {
+        if (!this.sandbox()) {
             return;
         }
 
