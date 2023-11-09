@@ -3,6 +3,7 @@ import Bag from "./bag.js";
 import Kick from "./kick.js";
 import Attack from "./attack.js";
 import Save from "./save.js";
+import Mode from "./mode.js";
 
 export default class Game {
 
@@ -10,11 +11,9 @@ export default class Game {
         this.kick = new Kick();      // kick tables
         this.attack = new Attack();  // attack table
         this.save = new Save();
+        this.mode = new Mode();
 
         this.new();
-
-        // Default game mode is free play
-        this.gameMode = "free";
 
         this.countdownTimeout;
         this.startCountdown = false;
@@ -51,54 +50,26 @@ export default class Game {
     }
 
     update(move) {
-        if (this.sandboxMove(move)) {
+
+        if (this.sandboxUpdate(move)) {
             return;
         }
-        if (move.type === "restart") {
-            this.restart(true);
+        if (this.gameFlowUpdate(move)) {
             return;
         }
-        else if (move.type === "pause") {
-            this.pause();
-        }
-        // don't allow game play during 2 second count down or while paused
-        else if (this.countingDown || this.paused) {
+        // Prevent game play in count down or when paused
+        if (this.countingDown || this.paused) {
             return;
         }
-        else if (move.type === "shift") {
-            this.shift(move.x, move.y);
-        }
-        else if (move.type === "shiftFloor") { // Infinite soft drop
-            this.shiftFloor();
-        }
-        else if (move.type === "leftWall") {
-            this.leftWall();
-        }
-        else if (move.type === "rightWall") {
-            this.rightWall();
-        }
-        else if (move.type === "drop") { // hard drop
-            this.drop();
-        }
-        else if (move.type === "rot") {
-            this.rotate(move.r);
-        }
-        else if (move.type === "hold") {
-            this.hold();
-        }
-        else if (move.type === "undo") {
-            this.undo();
-        }
-        else if (move.type === "redo") {
-            this.redo();
-        }
+        // Otherwise it's relating to a piece
+        this.pieceUpdate(move);
     }
 
     sandbox() {
-        return this.gameMode === "free" || this.gameMode === "b2b";
+        return this.mode.sandbox();
     }
 
-    sandboxMove(move) {
+    sandboxUpdate(move) {
         // Validation for sandbox mode is performed in call origin
         if (move.type === "fillSquare") {
             this.fillSquare(move.pieceType, move.x, move.y);
@@ -116,28 +87,76 @@ export default class Game {
         return false;
     }
 
-    play(mode) {
-        this.updateMode(mode);
+    gameFlowUpdate(move) {
+        if (move.type === "undo") {
+            this.undo();
+            return true;
+        }
+        if (move.type === "redo") {
+            this.redo();
+            return true;
+        }
+        if (move.type === "play") {
+            this.play(move.mode);
+            return true;
+        }
+        if (move.type === "pause") {
+            this.pause();
+            return true;
+        }
+        if (move.type === "restart") {
+            this.restart(true);
+            return true;
+        }
 
+        return false;
+    }
+
+    pieceUpdate(move) {
+        if (move.type === "shift") {
+            this.shift(move.x, move.y);
+        }
+        // Infinite soft drop
+        else if (move.type === "shiftFloor") {
+            this.shiftFloor();
+        }
+        else if (move.type === "leftWall") {
+            this.leftWall();
+        }
+        else if (move.type === "rightWall") {
+            this.rightWall();
+        }
+        // Hard drop
+        else if (move.type === "drop") {
+            this.drop();
+        }
+        else if (move.type === "rot") {
+            this.rotate(move.r);
+        }
+        else if (move.type === "hold") {
+            this.hold();
+        }
+    }
+
+    play(type) {
         this.paused = false;
+        this.updateMode(type);
 
-        if (this.gameMode === "sprint") {
-            clearTimeout(this.countdownTimeout);
+        if (this.mode.type === "sprint") {
             this.countdown();
         } else {
             this.updateStartTime();
         }
     }
 
-    updateMode(mode) {
-        // Changing game modes
-        if (mode && this.gameMode !== mode) {
+    updateMode(type) {
+        // If mode change made start fresh
+        if (this.mode.change(type)) {
             this.new();
-            this.gameMode = mode;
             this.save.clear();
         }
 
-        // Same mode and game over then restart
+        // Same mode and game over then start fresh
         else if (this.over) {
             this.new();
         }
@@ -148,11 +167,11 @@ export default class Game {
             return;
         }
 
-        // Stop countdown
-        clearTimeout(this.countdownTimeout);
-
         this.paused = true;
         this.updatedPause = true;
+
+        // Stop countdown
+        clearTimeout(this.countdownTimeout);
 
         // Track game play time
         if (this.startTime) { // populated when previously paused
@@ -171,7 +190,7 @@ export default class Game {
     }
 
     countdown() {
-        this.startCountdown = true;  // state variable for display.js
+        this.startCountdown = true;  // state variable for driver to start countdown
         this.countingDown = true;    // state variable for game.js
 
         this.countdownTimeout = setTimeout(() => {
@@ -257,6 +276,8 @@ export default class Game {
         // Clear rows that are filled
         let lineClears = this.grid.clearLines();
         this.linesCleared += lineClears;
+
+        this.mode.piecePlaced(lineClears);
 
         // Stats
         this.updateCombo(lineClears);
@@ -473,17 +494,17 @@ export default class Game {
     }
 
     checkGameOver() {
-        // Win if cleared 40 lines in sprint mode
-        if (this.gameMode === "sprint" && this.linesCleared >= 40) {
+        if (this.mode.win) {
             this.gameOver();
-            return;
+            console.log("Win");
+        } else if (this.toppedOut()) {
+            this.gameOver();
         }
+    }
 
-        // Lose if topped out
-        const piece = this.bag.getCurrentPiece();
-        if (!this.grid.valid(piece)) {
-            this.gameOver();
-        }
+    toppedOut() {
+        // Topped out when the current piece spawns on an occupied square (not a valid grid placement)
+        return !(this.grid.valid(this.bag.getCurrentPiece()));
     }
 
     gameOver() {
@@ -518,16 +539,12 @@ export default class Game {
     }
 
     fillSquare(type, x, y) {
-        if (this.countingDown || this.paused) {
-            return;
-        }
-
         this.grid.fillSquare(type, x, y);
         this.updatedGrid = true;
     }
 
     mode() {
-        return this.gameMode;
+        return this.mode.type;
     }
 
     getUpdatedGameOver() {
