@@ -21,9 +21,11 @@ export default class Game {
 
     }
 
-    new() {
+    new(fromMenu = false) {
         this.grid = new Grid();
         this.bag = new Bag();
+        this.mode.new();
+        this.mode.menuPause = fromMenu;
 
         this.updatedGrid = true;
         this.updatedHold = true;
@@ -39,7 +41,7 @@ export default class Game {
         this.piecesPlaced = 0;
         this.totalAttack = 0;
 
-        this.updatedPause = false;
+        this.updatedPause = true;
         this.updatedGameOver = false;
         this.over = false;
 
@@ -139,10 +141,23 @@ export default class Game {
     }
 
     play(type) {
-        this.paused = false;
         this.updateMode(type);
+        this.mode.play();
+
+        // Pauses in lookahead mode for user to get ready
+        if (this.checkModePause()) {
+            return;
+        }
+
+        this.updatedPause = false;
+        this.paused = false;
+
+        this.updatedGrid = true;
+        this.updatedHold = true;
+        this.updatedNext = true;
 
         if (this.mode.type === "sprint") {
+            clearTimeout(this.countdownTimeout);
             this.countdown();
         } else {
             this.updateStartTime();
@@ -162,16 +177,26 @@ export default class Game {
         }
     }
 
-    pause() {
+    pause(fromMenu = true) {
+        // Ensure mode is updated
+        this.mode.menuPause = fromMenu;
+
         if (this.paused) {
             return;
         }
 
         this.paused = true;
         this.updatedPause = true;
+        this.displayStartTimer = false;
+
+        this.mode.pause();
+        this.updatedGrid = true;
+        this.updatedHold = true;
+        this.updatedNext = true;
 
         // Stop countdown
         clearTimeout(this.countdownTimeout);
+        this.countingDown = false;
 
         // Track game play time
         if (this.startTime) { // populated when previously paused
@@ -186,7 +211,22 @@ export default class Game {
             this.saveState();
         }
         this.new();
-        this.play();
+
+        this.mode.restart();
+
+        // If mode doesn't pause then play
+        if (!this.checkModePause()) {
+            this.play();
+        }
+    }
+
+    checkModePause() {
+        if (this.mode.shouldPause) {
+            this.mode.shouldPause = false;
+            this.pause(false);
+            return true;
+        }
+        return false;
     }
 
     countdown() {
@@ -278,17 +318,20 @@ export default class Game {
         this.linesCleared += lineClears;
 
         this.mode.piecePlaced(lineClears);
+        this.checkModePause();
 
         // Stats
         this.updateCombo(lineClears);
         this.updateB2B(lineClears);
         this.updateAttack(lineClears);
 
-        this.setUpdatedGrid(true);
-        this.setUpdatedNext(true);
-
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
+
+        this.setUpdatedGrid(true);
+        this.setUpdatedHold(true);
+        this.setUpdatedNext(true);
+
     }
 
     updateCombo(lineClears) {
@@ -481,9 +524,11 @@ export default class Game {
 
         // updateHold is false when player tried holding twice in a row
         if (updatedHold) {
-            this.setUpdatedGrid(updatedHold);
-            this.setUpdatedHold(updatedHold);
-            this.setUpdatedNext(updatedNext);
+            this.updatedGrid = updatedHold;
+            this.updatedHold = updatedHold;
+            if (!this.updatedNext) { // If set to true don't reset status
+                this.updatedNext = updatedNext;
+            }
             this.tSpin = false;
             this.miniTSpin = false;
         }
@@ -496,7 +541,6 @@ export default class Game {
     checkGameOver() {
         if (this.mode.win) {
             this.gameOver();
-            console.log("Win");
         } else if (this.toppedOut()) {
             this.gameOver();
         }
@@ -508,14 +552,14 @@ export default class Game {
     }
 
     gameOver() {
+        this.mode.over();
         this.pause();
         this.over = true;
         this.updatedGameOver = true;
     }
 
     saveState() {
-        // Only in sandbox mode
-        if (!this.sandbox()) {
+        if (!this.mode.allowSave()) {
             return;
         }
 
@@ -528,6 +572,8 @@ export default class Game {
         }
 
         this.save.undo(this);
+
+        this.checkModePause();
     }
 
     redo() {
@@ -536,6 +582,8 @@ export default class Game {
         }
 
         this.save.redo(this);
+
+        this.checkModePause();
     }
 
     fillSquare(type, x, y) {
@@ -545,6 +593,10 @@ export default class Game {
 
     mode() {
         return this.mode.type;
+    }
+
+    setLookaheadPieces(numPieces) {
+        this.mode.setLookaheadPieces(numPieces);
     }
 
     getUpdatedGameOver() {
@@ -588,14 +640,23 @@ export default class Game {
     }
 
     getGrid() {
+        if (this.mode.blind) {
+            return this.grid.emptyGrid();
+        }
         return this.grid.getGrid();
     }
 
     getCurrentPiece() {
+        if (this.mode.blind) {
+            return "";
+        }
         return this.bag.getCurrentPiece();
     }
 
     getDropPreview() {
+        if (this.mode.blind) {
+            return "";
+        }
         const piece = this.bag.cloneCurrentPiece();
         this.calculateDrop(piece);
         piece.type = "preview";
@@ -603,10 +664,16 @@ export default class Game {
     }
 
     getHoldPiece() {
+        if (this.mode.blind) {
+            return "";
+        }
         return this.bag.getHoldPiece();
     }
 
     getNextPieces() {
+        if (this.mode.blind) {
+            return "";
+        }
         return this.bag.getNextPieces();
     }
 
@@ -708,6 +775,14 @@ export default class Game {
         this.bag.updateNext(types);
         this.updatedGrid = true;
         this.updatedNext = true;
+    }
+
+    getShowLookaheadReadyMenu() {
+        return this.mode.showLookaheadReadyMenu;
+    }
+
+    setShowLookaheadReadyMenu(update) {
+        this.mode.showLookaheadReadyMenu = update;
     }
 
 }

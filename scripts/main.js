@@ -17,8 +17,14 @@ function update() {
         game.setUpdatedGameOver(false);
     }
 
+    if (game.getShowLookaheadReadyMenu()) {
+        display.pause(game.getTimeElapsed());
+        menu.showLookaheadReadyMenu();
+        game.setShowLookaheadReadyMenu(false);
+    }
+
     if (game.getUpdatedPause()) {
-        display.pause();
+        display.pause(game.getTimeElapsed());
         menu.showMain();
         game.setUpdatedPause(false);
     }

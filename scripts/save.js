@@ -1,4 +1,5 @@
 import Game from "./game.js";
+import Mode from "./mode.js";
 import Grid from "./grid.js";
 import Bag from "./bag.js";
 import Piece from "./piece.js";
@@ -13,7 +14,7 @@ export default class Save {
     save(game) {
         // This (game) object size is max ~3500 bytes.
         // Every 1000 drops is ~3.5MB which is ~5 minutes of gameplay at 3.33 pps (really fast)
-        // Save around 5 minutes of gameplay history
+        // Save around 5 minutes of (fast) gameplay history
 
         if (this.history.length > 1000) {
             this.history.shift();
@@ -43,12 +44,14 @@ export default class Save {
 
     clear() {
         this.history = [];
+        this.future = [];
     }
 
     cloneGame(game) {
         let clone = new Game();
 
         this.cloneProperties(clone, game);
+        this.cloneMode(clone, game);
         this.cloneGrid(clone, game);
         this.cloneBag(clone, game);
 
@@ -68,6 +71,23 @@ export default class Save {
 
         // Keep current startTime and timeElapsed
 
+    }
+
+    cloneMode(clone, game) {
+        clone.mode = new Mode();
+        clone.mode.menuPause = game.mode.menuPause;
+        clone.mode.type = game.mode.type;
+        clone.mode.win = game.mode.win;
+        clone.mode.piecesPlaced = game.mode.piecesPlaced;
+        clone.mode.linesCleared = game.mode.linesCleared;
+        clone.mode.numLookaheadPieces = game.mode.numLookaheadPieces;
+
+        // Hard code for user input
+        if (game.mode.type === "lookahead") {
+            clone.mode.blind = false;
+            clone.mode.shouldPause = true;
+            clone.mode.showLookaheadReadyMenu = true;
+        }
     }
 
     cloneGrid(clone, game) {
@@ -98,6 +118,7 @@ export default class Save {
         game.updatedNext = true;
 
         // Properties
+        game.mode = state.mode;
         game.bag = state.bag;
         game.grid = state.grid;
 

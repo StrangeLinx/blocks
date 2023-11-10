@@ -15,6 +15,7 @@
         <button class="menu-option free-button">Free Play</button>
         <button class="menu-option sprint-button">Sprint</button>
         <button class="menu-option b2b-button">B2B Practice</button>
+        <button class="menu-option lookahead-button">Look Ahead Practice</button>
         <button class="menu-option controls-button">Controls</button>
         <button class="menu-option handling-button">Handling</button>
     </div>
@@ -31,6 +32,19 @@
         <button class="menu-option keybind-option" id="Rotate 180">Rotate 180<span></span></button>
         <button class="menu-option keybind-option" id="Hold">Hold<span></span></button>
         <button class="menu-option controls-done">Done</button>
+    </div>
+
+    <div class="menu" id="look-menu">
+        <div class="menu-option look-option">
+            <label for="lookahead">Lookahead Pieces</label>
+            <input type="text" placeholder="# of pieces" id="lookahead" autocomplete="off">
+        </div>
+        <button class="menu-option lookahead-play">Play</button>
+    </div>
+
+    <div class="menu" id="lookahead-ready-menu">
+        <div class="menu-option look-ready-option lookahead-instructions"></div>
+        <div class="menu-option look-ready-option">Press any key to start</div>
     </div>
 
     <div class="menu" id="handling-menu">

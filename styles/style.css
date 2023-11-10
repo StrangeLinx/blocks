@@ -351,6 +351,45 @@ label {
     color: #bc6dc4;
 }
 
+.menu-option.look-option {
+    flex-direction: column;
+    height: 4rem;
+    padding-bottom: 0.7rem;
+}
+
+.menu-option.look-option label {
+    padding: 0.5rem 1rem;
+}
+
+.menu-option.look-option input {
+    /* padding: 0.1rem 1rem; */
+    width: 40%;
+    height: 100%;
+}
+
+.menu#lookahead-ready-menu {
+    display: none;
+    z-index: -1;
+    box-sizing: border-box;
+    justify-content: flex-end;
+    padding: 4rem;
+    gap: 0;
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.menu-option.look-ready-option,
+.menu-option.look-ready-option:hover,
+.menu-option.look-ready-option:active {
+    padding: 0;
+    margin: 0;
+    height: auto;
+    width: auto;
+    border: 2px solid black;
+    border: 2px solid rgba(0, 0, 0, 0);
+    cursor: default;
+}
+
 span.invalid {
     color: rgb(255, 119, 65);
 }

@@ -262,6 +262,9 @@ export default class Display {
     }
 
     drawPiece(piece) {
+        if (!piece) {
+            return;
+        }
         for (let i = 0; i < piece.span.length; i++) {
             let r = piece.y + piece.span[i].y;
             let c = piece.x + piece.span[i].x;
@@ -287,6 +290,9 @@ export default class Display {
 
     drawNext(pieces) {
         this.next.innerHTML = "";
+        if (!pieces) {
+            return;
+        }
         // Origin for queue starts at (3, 3)
         // Origin for following is (3, 6) - add 3 to y
         let xCenter = 3;
@@ -310,9 +316,13 @@ export default class Display {
     }
 
     pause(timeElapsed) {
-        if (timeElapsed) {
+        if (timeElapsed === 0) {
+            this.resetTimer();
+            this.resetStats();
+        } else if (Number.isFinite(timeElapsed)) {
             this.updateTimer(timeElapsed);
         }
+
         this.stopStats();
 
         // Stop countdown
@@ -463,5 +473,14 @@ export default class Display {
 
         this.attack = attack;
         this.attackDisplay.innerHTML = attack;
+
+        let milliseconds = Date.now() - this.startTime;
+        if (!Number.isFinite(milliseconds) || milliseconds === 0) {
+            return;
+        }
+        let seconds = milliseconds / 1000;
+        let minutes = seconds / 60;
+        this.updatePPS(seconds);
+        this.updateAPM(minutes);
     }
 }

@@ -9,8 +9,12 @@ export default class Grid {
     }
 
     newGrid() {
+        this.grid = this.emptyGrid();
+    }
+
+    emptyGrid() {
         // Make an empty grid with dimensions - rows * cols (26 by 10)
-        this.grid = Array.from({ length: this.rows }, () => Array(this.cols).fill(""));
+        return Array.from({ length: this.rows }, () => Array(this.cols).fill(""));
     }
 
     place(piece) {

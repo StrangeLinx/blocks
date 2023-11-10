@@ -199,14 +199,15 @@ export default class Controls {
         if (!(key in this.pressed)) {
             return;
         }
-        let action = this.getControl(key);
 
         // Prevent event listener's repeat
         if (this.pressed[key]) {
             return;
         }
         this.pressed[key] = true;
+
         // Ensure it's a valid key press
+        let action = this.getControl(key);
         if (!action) {
             return;
         }

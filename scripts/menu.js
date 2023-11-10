@@ -24,6 +24,8 @@ export default class Menu {
         this.handlingMenu = document.querySelector("#handling-menu");
         this.resultsMenu = document.querySelector("#results-menu");
         this.editQueueMenu = document.querySelector("#edit-queue-menu");
+        this.lookMenu = document.querySelector("#look-menu");
+        this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
 
         // Main menu
         this.freeButton = document.querySelector(".free-button");
@@ -31,10 +33,16 @@ export default class Menu {
         this.b2bButton = document.querySelector(".b2b-button");
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
+        this.lookButton = document.querySelector(".lookahead-button");
 
         // In game
         this.gameMenuButton = document.querySelector(".game-menu-button");
         this.gameControlsButton = document.querySelector(".game-controls-button");
+
+        // Look ahead menu
+        this.lookaheadPiecesInput = document.querySelector("#lookahead");
+        this.lookaheadPlayButton = document.querySelector(".lookahead-play");
+        this.lookaheadInstructions = document.querySelector(".lookahead-instructions");
 
         // Control Menu
         this.keybindButtons = document.querySelectorAll(".keybind-option");
@@ -77,6 +85,14 @@ export default class Menu {
             this.game.play("b2b");
         });
 
+        this.lookButton.addEventListener("click", ev => {
+            this.hide(this.mainMenu);
+            this.show(this.lookMenu);
+            this.game.updateMode("lookahead");
+            this.game.new(); // Ensure new game every time
+            this.activeMenu = "look";
+        });
+
         this.controlsButton.addEventListener("click", ev => {
             this.hide(this.mainMenu);
             this.show(this.controlsMenu);
@@ -92,7 +108,15 @@ export default class Menu {
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
-            // No change if a menu is already open
+            if (this.activeMenu === "lookReady") {
+                this.game.pause();
+                this.hide(this.lookaheadReadyMenu);
+                this.show(this.mainMenu);
+                this.activeMenu = "main";
+                return;
+            }
+
+            // If another menu open ignore
             if (this.activeMenu) {
                 return;
             }
@@ -104,6 +128,15 @@ export default class Menu {
         });
 
         this.gameControlsButton.addEventListener("click", ev => {
+            if (this.activeMenu === "lookReady") {
+                this.game.pause();
+                this.hide(this.lookaheadReadyMenu);
+                this.directToGame = true;
+                this.show(this.controlsMenu);
+                this.activeMenu = "controls";
+                return;
+            }
+
             if (this.activeMenu) {
                 return;
             }
@@ -113,6 +146,21 @@ export default class Menu {
             this.directToGame = true;
             this.show(this.controlsMenu);
             this.activeMenu = "controls";
+        });
+
+
+        // Lookahead menu
+        this.lookaheadPiecesInput.addEventListener("blur", ev => this.validateLookahead(ev));
+        this.lookaheadPlayButton.addEventListener("click", ev => {
+            if (!this.validateLookahead(ev)) {
+                return;
+            }
+
+            let numLookaheadPieces = Number(this.lookaheadPiecesInput.value);
+            this.game.setLookaheadPieces(numLookaheadPieces);
+
+            this.hide(this.lookMenu);
+            this.showLookaheadReadyMenu();
         });
 
 
@@ -185,10 +233,27 @@ export default class Menu {
         }
     }
 
+    populateLookaheadReadyMenu() {
+        let piecesToPlace = this.game.mode.numLookaheadPieces - this.game.piecesPlaced % this.game.mode.numLookaheadPieces;
+        this.lookaheadInstructions.innerHTML = `Get ready to place ${piecesToPlace} pieces.`;
+    }
+
     addCurrentValuesToHandlingMenu() {
         this.DASInput.value = this.controls.DAS;
         this.ARRInput.value = this.controls.ARR;
         this.SDFInput.value = this.controls.SDF;
+    }
+
+    validateLookahead(ev) {
+        const MAXLOOKAHEAD = 6;
+        let pieces = Number(this.lookaheadPiecesInput.value);
+        if (!(Number.isInteger(pieces) && 2 <= pieces && pieces <= MAXLOOKAHEAD)) {
+            this.lookaheadPiecesInput.classList.add("invalid");
+            return false;
+        }
+
+        this.lookaheadPiecesInput.classList.remove("invalid");
+        return true;
     }
 
     updateHandling(ev) {
@@ -250,8 +315,15 @@ export default class Menu {
         if (this.activeMenu) {
             return;
         }
+
         this.mainMenu.style.display = "flex";
         this.activeMenu = "main";
+    }
+
+    showLookaheadReadyMenu() {
+        this.populateLookaheadReadyMenu();
+        this.show(this.lookaheadReadyMenu);
+        this.activeMenu = "lookReady";
     }
 
     showEditQueue() {
@@ -317,9 +389,15 @@ export default class Menu {
             // Prevent previous screen if a user is typing
             // User is permitted to have restart set to "i". This prevents potential interruption when typing into an input field
             return;
+        } else if (this.activeMenu === "lookReady") {
+            this.hide(this.lookaheadReadyMenu);
+            this.game.play();
+            this.controls.press(key);
+            this.activeMenu = "";
         } else if (key === this.controls.keybind("Pause")) {
             this.previousScreen();
         } else if (key === this.controls.keybind("Restart")) {
+            this.game.new(true);
             while (this.activeMenu) {
                 this.previousScreen();
             }
@@ -337,7 +415,7 @@ export default class Menu {
     inputFocused() {
         let e = document.activeElement;
         return this.DASInput === e || this.ARRInput === e || this.SDFInput === e ||
-            this.holdInput === e || this.nextInput === e;
+            this.holdInput === e || this.nextInput === e || this.lookaheadPiecesInput === e;
     }
 
     previousScreen() {
@@ -354,11 +432,16 @@ export default class Menu {
         } else if (this.activeMenu === "results") {
             this.hide(this.resultsMenu);
             this.activeMenu = "";
+            this.game.new(true);
             this.game.play();
         } else if (this.activeMenu === "editQueue") {
             this.hide(this.editQueueMenu);
             this.activeMenu = "";
             this.game.play();
+        } else if (this.activeMenu === "look") {
+            this.hide(this.lookMenu);
+            this.show(this.mainMenu);
+            this.activeMenu = "main";
         }
     }
 
