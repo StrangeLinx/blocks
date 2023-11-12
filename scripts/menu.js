@@ -89,7 +89,6 @@ export default class Menu {
             this.hide(this.mainMenu);
             this.show(this.lookMenu);
             this.game.updateMode("lookahead");
-            this.game.new(); // Ensure new game every time
             this.activeMenu = "look";
         });
 
@@ -391,6 +390,7 @@ export default class Menu {
             return;
         } else if (this.activeMenu === "lookReady") {
             this.hide(this.lookaheadReadyMenu);
+            this.game.mode.menuPause = false; // Prevent showing instructions menu twice. Already showing menu.
             this.game.play();
             this.controls.press(key);
             this.activeMenu = "";

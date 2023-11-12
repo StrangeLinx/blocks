@@ -596,7 +596,17 @@ export default class Game {
     }
 
     setLookaheadPieces(numPieces) {
+        if (numPieces === this.mode.numLookaheadPieces) {
+            return;
+        }
+
         this.mode.setLookaheadPieces(numPieces);
+
+        // Currently playing this mode and updating look ahead pieces.
+        // Save current state for a smoother "undo transition"
+        if (this.piecesPlaced > 0) {
+            this.save.save(this);
+        }
     }
 
     getUpdatedGameOver() {

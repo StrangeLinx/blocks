@@ -80,7 +80,6 @@ export default class Save {
         clone.mode.win = game.mode.win;
         clone.mode.piecesPlaced = game.mode.piecesPlaced;
         clone.mode.linesCleared = game.mode.linesCleared;
-        clone.mode.numLookaheadPieces = game.mode.numLookaheadPieces;
 
         // Hard code for user input
         if (game.mode.type === "lookahead") {
@@ -117,8 +116,12 @@ export default class Save {
         game.updatedHold = true;
         game.updatedNext = true;
 
-        // Properties
+        // Maintain current number of lookahead pieces
+        let temp = game.mode.numLookaheadPieces;
         game.mode = state.mode;
+        game.mode.numLookaheadPieces = temp;
+
+        // Properties
         game.bag = state.bag;
         game.grid = state.grid;
 
