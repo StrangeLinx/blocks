@@ -27,6 +27,8 @@ export default class Game {
         this.mode.new();
         this.mode.menuPause = fromMenu;
 
+        this.pieceToReveal = "";
+
         this.updatedGrid = true;
         this.updatedHold = true;
         this.updatedNext = true;
@@ -304,7 +306,6 @@ export default class Game {
     }
 
     drop() {
-        
         this.saveState();
 
         const piece = this.bag.place();
@@ -328,6 +329,10 @@ export default class Game {
 
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
+
+        if (this.mode.blind) {
+            this.pieceToReveal = piece;
+        }
 
         this.setUpdatedGrid(true);
         this.setUpdatedHold(true);
@@ -783,6 +788,12 @@ export default class Game {
 
     setShowLookaheadReadyMenu(update) {
         this.mode.showLookaheadReadyMenu = update;
+    }
+
+    revealDroppedPiece() {
+        let temp = this.pieceToReveal;
+        this.pieceToReveal = "";
+        return temp;
     }
 
 }

@@ -45,8 +45,10 @@ function update() {
 
 function draw() {
     display.setBlind(game.blind());
+
     if (game.getUpdatedGrid()) {
         display.drawGrid(game.getGrid(), game.getCurrentPiece(), game.getDropPreview());
+        display.setBlindPiecePlacement(game.revealDroppedPiece());
         game.setUpdatedGrid(false);
     }
 
@@ -62,8 +64,6 @@ function draw() {
         // When queue is updated, a piece was placed. Update stats
         display.setStats(game.getLinesCleared(), game.getB2B(), game.getCombo(), game.getPiecesPlaced(), game.getAttack());
     }
-
-    
 
     if (game.getStartCountdown()) {
         display.drawCountdown(game.getResetTimer());

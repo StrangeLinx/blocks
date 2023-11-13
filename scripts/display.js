@@ -14,10 +14,12 @@ export default class Display {
         this.createGridCells();
         this.bindGridEvents();
 
+        this.createHoldCells();
+        this.createNextCells();
+
         // hold, next edit options
         this.bindHoldNextEvents();
     }
-    
 
     createGridProperties() {
         this.rows = 20;
@@ -35,6 +37,8 @@ export default class Display {
         this.grid = document.querySelector("#grid");
         this.gridOverflow = document.querySelector("#grid-overflow");
         this.gridCells = [];
+        this.holdCells = [];
+        this.nextCells = [];
         this.hold = document.querySelector("#holdPiece");
         this.next = document.querySelector("#next");
 
@@ -109,7 +113,7 @@ export default class Display {
         for (let r = 0; r < this.rows; r++) {
             let row = [];
             for (let c = 0; c < this.cols; c++) {
-                let cell = this.createSquare((invertRow - r) + 1, c + 1, "empty");
+                let cell = this.createSquare((invertRow - r) + 1, c + 1, "outline");
                 this.grid.appendChild(cell);
                 row.push(cell);
             }
@@ -125,11 +129,35 @@ export default class Display {
         for (let r = this.rows; r < this.rows + this.overflowRows; r++) {
             let row = [];
             for (let c = 0; c < this.cols; c++) {
-                let cell = this.createSquare((invertRow - r) + 1, c + 1, "empty-overflow");
+                let cell = this.createSquare((invertRow - r) + 1, c + 1, "empty");
                 this.gridOverflow.appendChild(cell);
                 row.push(cell);
             }
             this.gridCells.push(row);
+        }
+    }
+
+    createHoldCells() {
+        for (let r = 0; r < this.holdRows; r++) {
+            let row = [];
+            for (let c = 0; c < this.holdCols; c++) {
+                let cell = this.createSquare(r + 1, c + 1, "empty");
+                this.hold.appendChild(cell);
+                row.push(cell);
+            }
+            this.holdCells.push(row);
+        }
+    }
+
+    createNextCells() {
+        for (let r = 0; r < this.nextRows; r++) {
+            let row = [];
+            for (let c = 0; c < this.nextCols; c++) {
+                let cell = this.createSquare(r + 1, c + 1, "empty");
+                this.next.appendChild(cell);
+                row.push(cell);
+            }
+            this.nextCells.push(row);
         }
     }
 
@@ -147,7 +175,7 @@ export default class Display {
     }
 
     clickGrid(ev, overFlowGrid) {
-        if (!this.game.sandbox()) {
+        if (!this.game.sandbox() || this.blind) {
             return;
         }
 
@@ -163,7 +191,7 @@ export default class Display {
     }
 
     hoverGrid(ev, overFlowGrid) {
-        if (!this.game.sandbox()) {
+        if (!this.game.sandbox() || this.blind) {
             return;
         }
 
@@ -180,7 +208,7 @@ export default class Display {
     }
 
     clickCell(cell) {
-        if (cell.className === "empty" || cell.className === "empty-overflow" || cell.className === "preview") {
+        if (cell.className === "outline" || cell.className === "empty" || cell.className === "preview") {
             this.triggerFill = true;
             this.triggerClear = false;
         } else {
@@ -223,7 +251,7 @@ export default class Display {
     }
 
     clickQueue() {
-        if (!this.game.sandbox()) {
+        if (!this.game.sandbox() || this.blind) {
             return;
         }
 
@@ -239,6 +267,26 @@ export default class Display {
         this.showEditQueueMenu = update;
     }
 
+    removeColorPieceAttributes(square) {
+        let pieceTypes = "goiljstz";
+        for (let type of pieceTypes) {
+            square.classList.remove(type);
+        }
+
+        square.classList.remove("preview");
+        square.classList.remove("outline");
+        square.classList.remove("empty");
+    }
+
+    updateSquare(square, type) {
+        square.classList.add(type);
+        if (this.blind) {
+            square.classList.add("blind");
+        } else {
+            square.classList.remove("blind");
+        }
+    }
+
     drawGrid(grid, currentPiece, dropPreview) {
 
         // Grid
@@ -247,38 +295,28 @@ export default class Display {
                 let currentSquare = this.gridCells[r][c];
                 let desiredSquare = grid[r][c];
                 if (desiredSquare === "") {
-                    currentSquare.className = "empty";
-                    if (this.blind) {
-                        currentSquare.classList.add("blind");
-                    } else {
-                        currentSquare.classList.remove("blind");
-                    }
-                } else {
-                    currentSquare.className = desiredSquare;
-                    if (this.blind) {
-                        currentSquare.classList.add("blind");
-                    } else {
-                        currentSquare.classList.remove("blind");
-                    }
+                    desiredSquare = "outline";
                 }
+                this.removeColorPieceAttributes(currentSquare);
+                this.updateSquare(currentSquare, desiredSquare);
             }
         }
 
         // Overflow Grid
         for (let r = this.rows; r < this.rows + this.overflowRows; r++) {
             for (let c = 0; c < this.cols; c++) {
-                if (grid[r][c] === "") {
-                    this.gridCells[r][c].className = "empty-overflow";
-                } else {
-                    this.gridCells[r][c].className = grid[r][c];
+                let currentSquare = this.gridCells[r][c];
+                let desiredSquare = grid[r][c];
+                if (desiredSquare === "") {
+                    desiredSquare = "empty";
                 }
+                this.removeColorPieceAttributes(currentSquare);
+                this.updateSquare(currentSquare, desiredSquare);
             }
         }
 
-        if (!this.blind) {
-            this.drawPiece(dropPreview);
-            this.drawPiece(currentPiece);
-        }
+        this.drawPiece(dropPreview);
+        this.drawPiece(currentPiece);
     }
 
     drawPiece(piece) {
@@ -288,45 +326,76 @@ export default class Display {
         for (let i = 0; i < piece.span.length; i++) {
             let r = piece.y + piece.span[i].y;
             let c = piece.x + piece.span[i].x;
-            this.gridCells[r][c].className = piece.type;
+            let currentSquare = this.gridCells[r][c];
+            this.removeColorPieceAttributes(currentSquare);
+            this.updateSquare(currentSquare, piece.type);
         }
     }
 
     drawHold(piece) {
-        this.hold.innerHTML = "";
+        for (let r = 0; r < this.holdRows; r++) {
+            for (let c = 0; c < this.holdCols; c++) {
+                let currentSquare = this.holdCells[r][c];
+                this.removeColorPieceAttributes(currentSquare);
+                this.updateSquare(currentSquare, "empty");
+            }
+        }
+
         if (!piece) {
             return;
         }
 
         // Center point for hold is (3, 3)
-        let xCenter = 3;
-        let yCenter = 3;
+        let xCenter = 2;
+        let yCenter = 2;
         for (let i = 0; i < piece.span.length; i++) {
             let row = yCenter - piece.span[i].y; // up 1 unit for piece is -1 unit in grid
             let col = xCenter + piece.span[i].x;
-            let square = this.createSquare(row, col, piece.type);
-            this.hold.appendChild(square);
+            this.holdCells[row][col].classList.add(piece.type);
         }
     }
 
     drawNext(pieces) {
-        this.next.innerHTML = "";
+        for (let r = 0; r < this.nextRows; r++) {
+            for (let c = 0; c < this.nextCols; c++) {
+                let currentSquare = this.nextCells[r][c];
+                this.removeColorPieceAttributes(currentSquare);
+                this.updateSquare(currentSquare, "empty");
+            }
+        }
+
         if (!pieces) {
             return;
         }
-        // Origin for queue starts at (3, 3)
-        // Origin for following is (3, 6) - add 3 to y
-        let xCenter = 3;
-        let yCenter = 3;
+
+        let xCenter = 2;
+        let yCenter = 2;
         pieces.forEach(piece => {
             for (let i = 0; i < piece.span.length; i++) {
                 let row = yCenter - piece.span[i].y;
                 let col = xCenter + piece.span[i].x;
-                let square = this.createSquare(row, col, piece.type);
-                this.next.appendChild((this.createSquare(row, col, piece.type)));
+                this.nextCells[row][col].classList.add(piece.type);
             }
             yCenter += 3;
         });
+    }
+
+    setBlindPiecePlacement(piece) {
+        if (!piece) {
+            return;
+        }
+
+        for (let i = 0; i < piece.span.length; i++) {
+            let r = piece.y + piece.span[i].y; // up 1 unit for piece is -1 unit in grid
+            let c = piece.x + piece.span[i].x;
+            this.gridCells[r][c].classList.remove("blind");
+            setTimeout(() => {
+                if (this.blind) {
+                    this.gridCells[r][c].classList.add("blind");
+                }
+            }, 1);
+        }
+
     }
 
     createSquare(row, column, type) {

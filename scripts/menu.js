@@ -112,7 +112,6 @@ export default class Menu {
             // if you remove this line, there will be a bug with element being clicked when spacebar is pressed
             this.gameMenuButton.blur();
             if (this.activeMenu === "lookReady") {
-                
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
                 this.show(this.mainMenu);
@@ -167,7 +166,7 @@ export default class Menu {
             this.hide(this.lookMenu);
             this.showLookaheadReadyMenu();
         });
-        
+
         this.lookaheadPiecesBottomInput.addEventListener("blur", ev => this.validateAndChange());
 
 
@@ -346,6 +345,11 @@ export default class Menu {
     }
 
     showEditQueue() {
+        if (this.activeMenu === "lookReady") {
+            this.game.pause();
+            this.hide(this.lookaheadReadyMenu);
+        }
+
         this.addHoldPieceToMenu();
         this.addNextPiecesToMenu();
         this.show(this.editQueueMenu);

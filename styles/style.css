@@ -170,7 +170,7 @@ body {
 
 */
 
-.empty {
+.outline {
     border: 1px solid rgb(38, 38, 38);
     border-radius: 35%;
 }
@@ -226,9 +226,8 @@ body {
 }
 
 .blind {
-    transition: .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    border: 1px solid black;
-    background-color: black;
+    opacity: 0;
+    transition: 0.2s ease-out;
 }
 
 /* 
@@ -397,6 +396,7 @@ label {
     border: 2px solid rgba(0, 0, 0, 0);
     cursor: default;
 }
+
 #lookahead-pieces-input {
     margin: 0;
     padding: 0 .5ch;
