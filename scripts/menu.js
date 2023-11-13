@@ -108,7 +108,9 @@ export default class Menu {
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
+            this.gameMenuButton.blur();
             if (this.activeMenu === "lookReady") {
+                
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
                 this.show(this.mainMenu);
@@ -128,6 +130,7 @@ export default class Menu {
         });
 
         this.gameControlsButton.addEventListener("click", ev => {
+            this.gameControlsButton.blur();
             if (this.activeMenu === "lookReady") {
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
