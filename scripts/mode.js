@@ -15,6 +15,7 @@ export default class Mode {
         this.win = false;
         this.piecesPlaced = 0;
         this.linesCleared = 0;
+        this.previousPiecesPlaced = 0;
         this.shouldPause = false;
         this.showLookaheadReadyMenu = false;
     }
@@ -48,8 +49,10 @@ export default class Mode {
     }
 
     update() {
+        
         this.checkWin();
         this.updateMode();
+        console.log(`Placed: ${this.piecesPlaced}, To place: ${this.remainingLookaheadPieces()}\n Should pause: ${this.shouldPause}`);
     }
 
     checkWin() {
@@ -72,6 +75,7 @@ export default class Mode {
                 this.blind = false;
                 this.shouldPause = true;
                 this.showLookaheadReadyMenu = true;
+                this.previousPiecesPlaced = this.piecesPlaced;
             } else {
                 this.blind = true;
             }
@@ -101,19 +105,21 @@ export default class Mode {
         if (this.piecesPlaced === 0) {
             return true;
         }
-        if (this.type === "lookahead" && !this.placedLookaheadPieces()) {
-            return false;
+        if (this.type === "lookahead") {
+            // allowSave is called before the piece is dropped, 
+            // so we should save every time we've placed our pieces, and remaininglookahead pieces is refreshed
+            return this.remainingLookaheadPieces() === this.numLookaheadPieces;
         }
         return true;
     }
 
+    remainingLookaheadPieces() {
+        return this.numLookaheadPieces - (this.piecesPlaced - this.previousPiecesPlaced);
+    }
+
     placedLookaheadPieces() {
-        // Haven't placed anything if 0
-        if (this.piecesPlaced === 0) {
-            return false;
-        }
         // Ex: If player placed 15 and lookahead is 5 then they placed their lookahead pieces
-        return this.piecesPlaced % this.numLookaheadPieces === 0;
+        return this.remainingLookaheadPieces() === 0;
     }
 
     setLookaheadPieces(numPieces) {

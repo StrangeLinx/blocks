@@ -304,6 +304,7 @@ export default class Game {
     }
 
     drop() {
+        
         this.saveState();
 
         const piece = this.bag.place();
@@ -604,9 +605,9 @@ export default class Game {
 
         // Currently playing this mode and updating look ahead pieces.
         // Save current state for a smoother "undo transition"
-        if (this.piecesPlaced > 0) {
+        /**if (this.piecesPlaced > 0) {
             this.save.save(this);
-        }
+        }*/
     }
 
     getUpdatedGameOver() {
