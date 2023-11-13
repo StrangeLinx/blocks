@@ -52,7 +52,6 @@ export default class Mode {
         
         this.checkWin();
         this.updateMode();
-        console.log(`Placed: ${this.piecesPlaced}, To place: ${this.remainingLookaheadPieces()}\n Should pause: ${this.shouldPause}`);
     }
 
     checkWin() {

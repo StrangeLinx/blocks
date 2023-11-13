@@ -108,6 +108,8 @@ export default class Menu {
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
+            // Note to future Gamers:
+            // if you remove this line, there will be a bug with element being clicked when spacebar is pressed
             this.gameMenuButton.blur();
             if (this.activeMenu === "lookReady") {
                 

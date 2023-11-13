@@ -651,23 +651,18 @@ export default class Game {
     }
 
     getGrid() {
-        if (this.mode.blind) {
-            return this.grid.emptyGrid();
-        }
         return this.grid.getGrid();
     }
 
     getCurrentPiece() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getCurrentPiece();
     }
 
+    blind() {
+        return this.mode.blind;
+    }
+
     getDropPreview() {
-        if (this.mode.blind) {
-            return "";
-        }
         const piece = this.bag.cloneCurrentPiece();
         this.calculateDrop(piece);
         piece.type = "preview";
@@ -675,16 +670,10 @@ export default class Game {
     }
 
     getHoldPiece() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getHoldPiece();
     }
 
     getNextPieces() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getNextPieces();
     }
 
