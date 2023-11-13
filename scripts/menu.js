@@ -43,6 +43,7 @@ export default class Menu {
         this.lookaheadPiecesInput = document.querySelector("#lookahead");
         this.lookaheadPlayButton = document.querySelector(".lookahead-play");
         this.lookaheadInstructions = document.querySelector(".lookahead-instructions");
+        this.lookaheadPiecesBottomInput = document.querySelector("#lookahead-pieces-input");
 
         // Control Menu
         this.keybindButtons = document.querySelectorAll(".keybind-option");
@@ -107,7 +108,11 @@ export default class Menu {
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
+            // Note to future Gamers:
+            // if you remove this line, there will be a bug with element being clicked when spacebar is pressed
+            this.gameMenuButton.blur();
             if (this.activeMenu === "lookReady") {
+                
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
                 this.show(this.mainMenu);
@@ -127,6 +132,7 @@ export default class Menu {
         });
 
         this.gameControlsButton.addEventListener("click", ev => {
+            this.gameControlsButton.blur();
             if (this.activeMenu === "lookReady") {
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
@@ -149,9 +155,9 @@ export default class Menu {
 
 
         // Lookahead menu
-        this.lookaheadPiecesInput.addEventListener("blur", ev => this.validateLookahead(ev));
+        this.lookaheadPiecesInput.addEventListener("blur", ev => this.validateLookahead(ev.target));
         this.lookaheadPlayButton.addEventListener("click", ev => {
-            if (!this.validateLookahead(ev)) {
+            if (!this.validateLookahead(this.lookaheadPiecesInput)) {
                 return;
             }
 
@@ -161,6 +167,8 @@ export default class Menu {
             this.hide(this.lookMenu);
             this.showLookaheadReadyMenu();
         });
+        
+        this.lookaheadPiecesBottomInput.addEventListener("blur", ev => this.validateAndChange());
 
 
         // Controls Manu
@@ -212,6 +220,17 @@ export default class Menu {
         });
     }
 
+    validateAndChange() {
+        let pieceInput = this.lookaheadPiecesBottomInput;
+        let validated = this.validateLookahead(pieceInput);
+        if (!validated) {
+            return;
+        }
+        let numLookaheadPieces = Number(pieceInput.value);
+        this.game.setLookaheadPieces(numLookaheadPieces);
+        this.lookaheadPiecesInput.value = numLookaheadPieces;
+    }
+
     addCurrentKeybindsToControlsMenu() {
         for (let i = 0; i < this.keybindButtons.length; i++) {
             let span = this.keybindButtons[i].querySelector("span");
@@ -233,8 +252,9 @@ export default class Menu {
     }
 
     populateLookaheadReadyMenu() {
-        let piecesToPlace = this.game.mode.numLookaheadPieces - this.game.piecesPlaced % this.game.mode.numLookaheadPieces;
-        this.lookaheadInstructions.innerHTML = `Get ready to place ${piecesToPlace} pieces.`;
+        let piecesToPlace = this.game.mode.remainingLookaheadPieces();
+        // this.lookaheadInstructions.innerHTML = `Get ready to place ${piecesToPlace} pieces.`;
+        this.lookaheadPiecesBottomInput.value = piecesToPlace;
     }
 
     addCurrentValuesToHandlingMenu() {
@@ -243,15 +263,15 @@ export default class Menu {
         this.SDFInput.value = this.controls.SDF;
     }
 
-    validateLookahead(ev) {
+    validateLookahead(pieceInput) {
         const MAXLOOKAHEAD = 6;
-        let pieces = Number(this.lookaheadPiecesInput.value);
+        let pieces = Number(pieceInput.value);
         if (!(Number.isInteger(pieces) && 2 <= pieces && pieces <= MAXLOOKAHEAD)) {
-            this.lookaheadPiecesInput.classList.add("invalid");
+            pieceInput.classList.add("invalid");
             return false;
         }
 
-        this.lookaheadPiecesInput.classList.remove("invalid");
+        pieceInput.classList.remove("invalid");
         return true;
     }
 
@@ -415,7 +435,7 @@ export default class Menu {
     inputFocused() {
         let e = document.activeElement;
         return this.DASInput === e || this.ARRInput === e || this.SDFInput === e ||
-            this.holdInput === e || this.nextInput === e || this.lookaheadPiecesInput === e;
+            this.holdInput === e || this.nextInput === e || this.lookaheadPiecesInput === e || this.lookaheadPiecesBottomInput === e;
     }
 
     previousScreen() {

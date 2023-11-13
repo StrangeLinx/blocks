@@ -80,6 +80,7 @@ export default class Save {
         clone.mode.win = game.mode.win;
         clone.mode.piecesPlaced = game.mode.piecesPlaced;
         clone.mode.linesCleared = game.mode.linesCleared;
+        clone.mode.previousPiecesPlaced = game.mode.previousPiecesPlaced;
 
         // Hard code for user input
         if (game.mode.type === "lookahead") {

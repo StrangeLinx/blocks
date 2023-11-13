@@ -304,6 +304,7 @@ export default class Game {
     }
 
     drop() {
+        
         this.saveState();
 
         const piece = this.bag.place();
@@ -604,9 +605,9 @@ export default class Game {
 
         // Currently playing this mode and updating look ahead pieces.
         // Save current state for a smoother "undo transition"
-        if (this.piecesPlaced > 0) {
+        /**if (this.piecesPlaced > 0) {
             this.save.save(this);
-        }
+        }*/
     }
 
     getUpdatedGameOver() {
@@ -650,23 +651,18 @@ export default class Game {
     }
 
     getGrid() {
-        if (this.mode.blind) {
-            return this.grid.emptyGrid();
-        }
         return this.grid.getGrid();
     }
 
     getCurrentPiece() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getCurrentPiece();
     }
 
+    blind() {
+        return this.mode.blind;
+    }
+
     getDropPreview() {
-        if (this.mode.blind) {
-            return "";
-        }
         const piece = this.bag.cloneCurrentPiece();
         this.calculateDrop(piece);
         piece.type = "preview";
@@ -674,16 +670,10 @@ export default class Game {
     }
 
     getHoldPiece() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getHoldPiece();
     }
 
     getNextPieces() {
-        if (this.mode.blind) {
-            return "";
-        }
         return this.bag.getNextPieces();
     }
 

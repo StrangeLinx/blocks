@@ -225,6 +225,12 @@ body {
     background-color: #e6e6e6;
 }
 
+.blind {
+    transition: .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    border: 1px solid black;
+    background-color: black;
+}
+
 /* 
 
     Menu screens
@@ -375,7 +381,7 @@ label {
     transform: translate(-50%, 0);
     top: 30.5rem;
     height: 3rem;
-    width: 14rem;
+    width: 15rem;
     background-color: black;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -390,6 +396,11 @@ label {
     border: 2px solid black;
     border: 2px solid rgba(0, 0, 0, 0);
     cursor: default;
+}
+#lookahead-pieces-input {
+    margin: 0;
+    padding: 0 .5ch;
+    width: 2ch;
 }
 
 span.invalid {

@@ -17,6 +17,7 @@ export default class Display {
         // hold, next edit options
         this.bindHoldNextEvents();
     }
+    
 
     createGridProperties() {
         this.rows = 20;
@@ -26,6 +27,7 @@ export default class Display {
         this.holdCols = 6;
         this.nextRows = 16;
         this.nextCols = 6;
+        this.blind = false;
     }
 
     retrieveGameElements() {
@@ -91,6 +93,10 @@ export default class Display {
         height = unit * this.nextRows;
         this.next.style.width = `${width}rem`;
         this.next.style.height = `${height}rem`;
+    }
+
+    setBlind(flag) {
+        this.blind = flag;
     }
 
     createGridCells() {
@@ -238,10 +244,22 @@ export default class Display {
         // Grid
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
-                if (grid[r][c] === "") {
-                    this.gridCells[r][c].className = "empty";
+                let currentSquare = this.gridCells[r][c];
+                let desiredSquare = grid[r][c];
+                if (desiredSquare === "") {
+                    currentSquare.className = "empty";
+                    if (this.blind) {
+                        currentSquare.classList.add("blind");
+                    } else {
+                        currentSquare.classList.remove("blind");
+                    }
                 } else {
-                    this.gridCells[r][c].className = grid[r][c];
+                    currentSquare.className = desiredSquare;
+                    if (this.blind) {
+                        currentSquare.classList.add("blind");
+                    } else {
+                        currentSquare.classList.remove("blind");
+                    }
                 }
             }
         }
@@ -257,8 +275,10 @@ export default class Display {
             }
         }
 
-        this.drawPiece(dropPreview);
-        this.drawPiece(currentPiece);
+        if (!this.blind) {
+            this.drawPiece(dropPreview);
+            this.drawPiece(currentPiece);
+        }
     }
 
     drawPiece(piece) {
@@ -284,7 +304,8 @@ export default class Display {
         for (let i = 0; i < piece.span.length; i++) {
             let row = yCenter - piece.span[i].y; // up 1 unit for piece is -1 unit in grid
             let col = xCenter + piece.span[i].x;
-            this.hold.appendChild(this.createSquare(row, col, piece.type));
+            let square = this.createSquare(row, col, piece.type);
+            this.hold.appendChild(square);
         }
     }
 
@@ -301,6 +322,7 @@ export default class Display {
             for (let i = 0; i < piece.span.length; i++) {
                 let row = yCenter - piece.span[i].y;
                 let col = xCenter + piece.span[i].x;
+                let square = this.createSquare(row, col, piece.type);
                 this.next.appendChild((this.createSquare(row, col, piece.type)));
             }
             yCenter += 3;
