@@ -13,8 +13,8 @@ export default class Save {
 
     save(game) {
         // This (game) object size is max ~3500 bytes.
-        // Every 1000 drops is ~3.5MB which is ~5 minutes of gameplay at 3.33 pps (really fast)
-        // Save around 5 minutes of (fast) gameplay history
+        // Every 1000 drops is ~3.5MB which is ~5 minutes of game play at 3.33 pps (really fast)
+        // Save around 5 minutes of (fast) game play history
 
         if (this.history.length > 1000) {
             this.history.shift();

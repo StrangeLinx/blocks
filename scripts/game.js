@@ -362,7 +362,7 @@ export default class Game {
         if (lineClears === 4 || this.tSpin || this.miniTSpin) {
             this.b2b++;
         } else {
-            // Broken when a line clear is not a quad, tspin, or a mini t spin
+            // Broken when a line clear is not a quad, tSpin, or a mini t spin
             this.b2b = -1;
         }
         if (this.b2b > this.maxB2B) {
@@ -446,7 +446,7 @@ export default class Game {
         // Condition for t spin (1 & 2 & ((3 & 4) or 5))
         // 1. Piece is a t
         // 2. (Satisfied from caller) Last move type is rotation
-        // 3. At least 3 of the 4 corners are occupied (from the 3x3 subgrid of piece span)
+        // 3. At least 3 of the 4 corners are occupied (from the 3x3 sub-grid of piece span)
         // 4. The t faces 2 of the occupied corners
         // 5. The t performed a TST or FIN kick:
         //    (new rotation, current rotation, kick) = (1 0 4), (3 0 4), (1 2 4), or (3 2 4)
@@ -472,7 +472,7 @@ export default class Game {
         }
 
         // Condition 3
-        // 3*3 possible subgrids from t piece where x represent the corners:
+        // 3*3 possible sub-grids from t piece where x represent the corners:
         //    x t x   x t x   x - x   x t x
         //    t t t   - t t   t t t   t t -
         //    x - x   x t x   x t x   x t x

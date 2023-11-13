@@ -170,7 +170,7 @@ export default class Menu {
         this.lookaheadPiecesBottomInput.addEventListener("blur", ev => this.validateAndChange());
 
 
-        // Controls Manu
+        // Controls Menu
         this.controlsDoneButton.addEventListener("click", ev => {
             this.hideControls();
         });

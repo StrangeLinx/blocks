@@ -49,7 +49,6 @@ export default class Mode {
     }
 
     update() {
-        
         this.checkWin();
         this.updateMode();
     }
@@ -106,7 +105,7 @@ export default class Mode {
         }
         if (this.type === "lookahead") {
             // allowSave is called before the piece is dropped, 
-            // so we should save every time we've placed our pieces, and remaininglookahead pieces is refreshed
+            // so we should save every time we've placed our pieces, and remaining lookahead pieces is refreshed
             return this.remainingLookaheadPieces() === this.numLookaheadPieces;
         }
         return true;

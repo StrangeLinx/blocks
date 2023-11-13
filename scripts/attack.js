@@ -1,7 +1,7 @@
 
 export default class Attack {
 
-    // Uses TETRI.OS' "Multiplier" attack table
+    // Uses TETR,IO'S "Multiplier" attack table
 
     // From Tetrio's discord:
     // Attack for singles (1 line clear):
@@ -30,18 +30,18 @@ export default class Attack {
 
     }
 
-    calc(lineClears, combo = 0, b2b = 0, tspin = false, miniTSpin = false, perfectClear = false) {
+    calc(lineClears, combo = 0, b2b = 0, tSpin = false, miniTSpin = false, perfectClear = false) {
         let perfectClearAttack = 0;
         if (perfectClear) {
             perfectClearAttack = 10;
         }
 
         // Singles (no t spin) and Mini T Spin Singles with b2b 0 are equivalent
-        if (lineClears === 1 && (!(tspin || miniTSpin) || (miniTSpin && b2b === 0))) {
+        if (lineClears === 1 && (!(tSpin || miniTSpin) || (miniTSpin && b2b === 0))) {
             return this.single(combo) + perfectClearAttack;
         }
 
-        return this.multiple(lineClears, combo, b2b, tspin) + perfectClearAttack;
+        return this.multiple(lineClears, combo, b2b, tSpin) + perfectClearAttack;
     }
 
     single(combo) {
