@@ -388,8 +388,13 @@ export default class Display {
         for (let i = 0; i < piece.span.length; i++) {
             let r = piece.y + piece.span[i].y; // up 1 unit for piece is -1 unit in grid
             let c = piece.x + piece.span[i].x;
+            let prevClasses = this.gridCells[r][c].classList;
+            this.gridCells[r][c].classList = "";
+            this.gridCells[r][c].classList.add(piece.type);
             this.gridCells[r][c].classList.remove("blind");
             setTimeout(() => {
+                this.gridCells[r][c].classList = prevClasses;
+                this.gridCells[r][c].classList.remove("blind");
                 if (this.blind) {
                     this.gridCells[r][c].classList.add("blind");
                 }
