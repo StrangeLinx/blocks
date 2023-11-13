@@ -43,23 +43,16 @@ body {
 
 #grid {
     grid-area: grid;
-    grid-template-rows: 20;
-    grid-template-columns: 10;
+    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(10, 1fr);
     border-top: none;
 }
 
 
 #grid-overflow {
     display: grid;
-    grid-template-rows: 6;
-    grid-template-columns: 10;
-    grid-template-areas:
-        "a a a a a a a a a a"
-        "a a a a a a a a a a"
-        "a a a a a a a a a a"
-        "a a a a a a a a a a"
-        "a a a a a a a a a a"
-        "a a a a a a a a a a";
+    grid-template-rows: repeat(6, 1fr);
+    grid-template-columns: repeat(10, 1fr);
 
     position: absolute;
     /* Center positioning */
@@ -69,36 +62,14 @@ body {
 
 #holdPiece {
     grid-area: hold;
-    grid-template-rows: 4;
-    grid-template-columns: 6;
-    grid-template-areas:
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a";
+    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
 }
 
 #next {
     grid-area: next;
-    grid-template-rows: 16;
-    grid-template-columns: 6;
-    grid-template-areas:
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a"
-        "a a a a a a";
+    grid-template-rows: repeat(16, 1fr);
+    grid-template-columns: repeat(6, 1fr);
 }
 
 #stats-container {
