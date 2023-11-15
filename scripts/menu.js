@@ -20,7 +20,10 @@ export default class Menu {
     }
 
     initMenus() {
+        // All menus
         this.mainMenu = document.querySelector("#main-menu");
+        this.changeModeMenu = document.querySelector("#change-mode-menu");
+        this.settingsMenu = document.querySelector("#settings-menu");
         this.controlsMenu = document.querySelector("#controls-menu");
         this.handlingMenu = document.querySelector("#handling-menu");
         this.resultsMenu = document.querySelector("#results-menu");
@@ -29,13 +32,22 @@ export default class Menu {
         this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
 
         // Main menu
+        this.playButton = document.querySelector(".play-button");
+        this.changeModeButton = document.querySelector(".change-mode-button");
+        this.settingsButton = document.querySelector(".settings-button");
+        this.uploadButton = document.getElementById("load-file");
+
+        // Change Mode menu
         this.freeButton = document.querySelector(".free-button");
-        this.sprintButton = document.querySelector(".sprint-button");
         this.b2bButton = document.querySelector(".b2b-button");
         this.lookButton = document.querySelector(".lookahead-button");
+        this.sprintButton = document.querySelector(".sprint-button");
+        this.changeModeDoneButton = document.querySelector(".change-mode-done");
+
+        // Settings menu
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
-        this.uploadButton = document.getElementById("load-file");
+        this.settingsDoneButton = document.querySelector(".settings-done-button");
 
         // In game
         this.gameMenuButton = document.querySelector(".game-menu-button");
@@ -70,44 +82,55 @@ export default class Menu {
 
     addButtonClickEvents() {
         // Main menu
-        this.freeButton.addEventListener("click", ev => {
+        this.playButton.addEventListener("click", () => {
             this.hide(this.mainMenu);
             this.activeMenu = "";
-            this.game.play("free");
+            this.game.play();
         });
 
-        this.sprintButton.addEventListener("click", ev => {
+        this.changeModeButton.addEventListener("click", () => {
             this.hide(this.mainMenu);
-            this.activeMenu = "";
-            this.game.play("sprint");
+            this.activeMenu = "changeMode";
+            this.show(this.changeModeMenu);
         });
 
-        this.b2bButton.addEventListener("click", ev => {
+        this.settingsButton.addEventListener("click", () => {
             this.hide(this.mainMenu);
-            this.activeMenu = "";
-            this.game.play("b2b");
-        });
-
-        this.lookButton.addEventListener("click", ev => {
-            this.hide(this.mainMenu);
-            this.show(this.lookMenu);
-            this.game.updateMode("lookahead");
-            this.activeMenu = "look";
-        });
-
-        this.controlsButton.addEventListener("click", ev => {
-            this.hide(this.mainMenu);
-            this.show(this.controlsMenu);
-            this.activeMenu = "controls";
-        });
-
-        this.handlingButton.addEventListener("click", ev => {
-            this.hide(this.mainMenu);
-            this.show(this.handlingMenu);
-            this.activeMenu = "handling";
+            this.activeMenu = "settings";
+            this.show(this.settingsMenu);
         });
 
         this.uploadButton.addEventListener("change", ev => this.loadGameFromImage(ev));
+
+        // Change mode menu
+        this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
+        this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
+        this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
+        this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
+        this.changeModeDoneButton.addEventListener("click", () => {
+            this.hide(this.changeModeMenu);
+            this.activeMenu = "main";
+            this.show(this.mainMenu);
+        });
+
+        // Settings menu
+        this.controlsButton.addEventListener("click", () => {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "controls";
+            this.show(this.controlsMenu);
+        });
+
+        this.handlingButton.addEventListener("click", () => {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "handling";
+            this.show(this.handlingMenu);
+        });
+
+        this.settingsDoneButton.addEventListener("click", () => {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "main";
+            this.show(this.mainMenu);
+        });
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
@@ -195,8 +218,8 @@ export default class Menu {
         this.SDFInput.addEventListener("blur", ev => this.updateHandling(ev));
         this.handlingDoneButton.addEventListener("click", ev => {
             this.hide(this.handlingMenu);
-            this.show(this.mainMenu);
-            this.activeMenu = "main";
+            this.show(this.settingsMenu);
+            this.activeMenu = "settings";
         });
 
         // Edit Queue
@@ -399,8 +422,8 @@ export default class Menu {
             this.game.play();
         } else {
             this.hide(this.controlsMenu);
-            this.show(this.mainMenu);
-            this.activeMenu = "main";
+            this.show(this.settingsMenu);
+            this.activeMenu = "settings";
         }
     }
 
@@ -450,22 +473,44 @@ export default class Menu {
             this.hide(this.mainMenu);
             this.activeMenu = "";
             this.game.play();
-        } else if (this.activeMenu === "controls") {
-            this.hideControls();
-        } else if (this.activeMenu === "handling") {
-            this.hide(this.handlingMenu);
-            this.show(this.mainMenu);
+        }
+
+        else if (this.activeMenu === "changeMode") {
+            this.hide(this.changeModeMenu);
             this.activeMenu = "main";
-        } else if (this.activeMenu === "results") {
+            this.show(this.mainMenu);
+        }
+
+        else if (this.activeMenu === "settings") {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "main";
+            this.show(this.mainMenu);
+        }
+
+        else if (this.activeMenu === "controls") {
+            this.hideControls();
+        }
+
+        else if (this.activeMenu === "handling") {
+            this.hide(this.handlingMenu);
+            this.show(this.settingsMenu);
+            this.activeMenu = "settings";
+        }
+
+        else if (this.activeMenu === "results") {
             this.hide(this.resultsMenu);
             this.activeMenu = "";
             this.game.new(true);
             this.game.play();
-        } else if (this.activeMenu === "editQueue") {
+        }
+
+        else if (this.activeMenu === "editQueue") {
             this.hide(this.editQueueMenu);
             this.activeMenu = "";
             this.game.play();
-        } else if (this.activeMenu === "look") {
+        }
+
+        else if (this.activeMenu === "look") {
             this.hide(this.lookMenu);
             this.show(this.mainMenu);
             this.activeMenu = "main";
@@ -474,6 +519,12 @@ export default class Menu {
 
     active() {
         return this.activeMenu;
+    }
+
+    updateGameModeFromMenu(type) {
+        this.hide(this.changeModeMenu);
+        this.activeMenu = "";
+        this.game.play(type);
     }
 
     async loadGameFromImage(ev) {

@@ -168,6 +168,8 @@ export default class Game {
     }
 
     updateMode(type) {
+        // Note mode can only be updated from menu
+
         // Always restart if changing mode to sprint
         if (type === "sprint" && this.mode.change(type)) {
             this.new();
@@ -178,14 +180,14 @@ export default class Game {
         let updatedMode = this.mode.change(type);
         // If mode change made start fresh
         if (updatedMode && this.restartOnModeChange) {
-            this.new();
+            this.new(true);
             this.save.clear();
             return;
         }
 
         // Same mode and game over then start fresh
         if (!updatedMode && this.over) {
-            this.new();
+            this.new(true);
             return;
         }
 

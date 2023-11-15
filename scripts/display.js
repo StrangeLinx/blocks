@@ -43,22 +43,22 @@ export default class Display {
         this.next = document.querySelector("#next");
 
         // Stats
-        this.linesDisplay = document.querySelector("#lines");
+        this.linesDisplay = document.querySelector("#lines-stat");
         this.lines = 0;
 
-        this.b2bDisplay = document.querySelector("#b2b");
+        this.b2bDisplay = document.querySelector("#b2b-stat");
         this.b2b = 0;
 
-        this.comboDisplay = document.querySelector("#combo");
+        this.comboDisplay = document.querySelector("#combo-stat");
         this.combo = 0;
 
-        this.piecesDisplay = document.querySelector("#pieces");
+        this.piecesDisplay = document.querySelector("#pieces-stat");
         this.piecesPlaced = 0;
-        this.ppsDisplay = document.querySelector("#pps");
+        this.ppsDisplay = document.querySelector("#pps-stat");
 
-        this.attackDisplay = document.querySelector("#attack");
+        this.attackDisplay = document.querySelector("#attack-stat");
         this.attack = 0;
-        this.apmDisplay = document.querySelector("#apm");
+        this.apmDisplay = document.querySelector("#apm-stat");
 
         this.timerDisplay = document.querySelector("#timer");
         this.timerInterval;
