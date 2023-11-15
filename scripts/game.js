@@ -26,6 +26,7 @@ export default class Game {
         this.bag = new Bag();
         this.mode.new();
         this.mode.menuPause = fromMenu;
+        this.restartOnModeChange = true;
 
         this.pieceToReveal = "";
 
@@ -167,16 +168,30 @@ export default class Game {
     }
 
     updateMode(type) {
-        // If mode change made start fresh
-        if (this.mode.change(type)) {
+        // Always restart if changing mode to sprint
+        if (type === "sprint" && this.mode.change(type)) {
             this.new();
             this.save.clear();
+            return;
+        }
+
+        let updatedMode = this.mode.change(type);
+        // If mode change made start fresh
+        if (updatedMode && this.restartOnModeChange) {
+            this.new();
+            this.save.clear();
+            return;
         }
 
         // Same mode and game over then start fresh
-        else if (this.over) {
+        if (!updatedMode && this.over) {
             this.new();
+            return;
         }
+
+        // Restart on next mode change
+        // Adding this so when user loads a board from a screenshot (see load()), it doesn't get wiped
+        this.restartOnModeChange = true;
     }
 
     pause(fromMenu = true) {
@@ -595,6 +610,20 @@ export default class Game {
     fillSquare(type, x, y) {
         this.grid.fillSquare(type, x, y);
         this.updatedGrid = true;
+    }
+
+    load(grid, hold, next) {
+        if (!grid) {
+            return;
+        }
+
+        this.updateMode("free");
+        this.saveState();
+        this.restartOnModeChange = false;
+
+        this.grid.setGrid(grid);
+        this.updateHold(hold);
+        this.updateNext(next);
     }
 
     mode() {

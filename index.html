@@ -18,6 +18,10 @@
         <button class="menu-option lookahead-button">Look Ahead Practice</button>
         <button class="menu-option controls-button">Controls</button>
         <button class="menu-option handling-button">Handling</button>
+        <!-- Clickable button to upload image without the default input[type="file"] text -->
+        <input type="file" id="load-file" accept="image/*" style="display: none;">
+        <button class="menu-option upload-button" onclick="document.getElementById('load-file').click()">Upload
+            Screenshot</button>
     </div>
 
     <div class="menu" id="controls-menu">

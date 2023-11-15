@@ -68,6 +68,7 @@ export default class Save {
         clone.maxCombo = game.maxCombo;
         clone.piecesPlaced = game.piecesPlaced;
         clone.totalAttack = game.totalAttack;
+        clone.restartOnModeChange = game.restartOnModeChange;
 
         // Keep current startTime and timeElapsed
 
@@ -135,6 +136,7 @@ export default class Save {
         game.maxCombo = state.maxCombo;
         game.piecesPlaced = state.piecesPlaced;
         game.totalAttack = state.totalAttack;
+        game.restartOnModeChange = state.restartOnModeChange;
 
     }
 }

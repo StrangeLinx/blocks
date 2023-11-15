@@ -133,4 +133,8 @@ export default class Grid {
     getGrid() {
         return this.grid;
     }
+
+    setGrid(grid) {
+        this.grid = grid;
+    }
 }

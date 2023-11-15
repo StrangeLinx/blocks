@@ -1,3 +1,4 @@
+import processImage from "./image.js";
 
 export default class Menu {
 
@@ -31,9 +32,10 @@ export default class Menu {
         this.freeButton = document.querySelector(".free-button");
         this.sprintButton = document.querySelector(".sprint-button");
         this.b2bButton = document.querySelector(".b2b-button");
+        this.lookButton = document.querySelector(".lookahead-button");
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
-        this.lookButton = document.querySelector(".lookahead-button");
+        this.uploadButton = document.getElementById("load-file");
 
         // In game
         this.gameMenuButton = document.querySelector(".game-menu-button");
@@ -105,6 +107,7 @@ export default class Menu {
             this.activeMenu = "handling";
         });
 
+        this.uploadButton.addEventListener("change", ev => this.loadGameFromImage(ev));
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
@@ -471,5 +474,10 @@ export default class Menu {
 
     active() {
         return this.activeMenu;
+    }
+
+    async loadGameFromImage(ev) {
+        const [grid, hold, next] = await processImage(ev.target.files[0]);
+        this.game.load(grid, hold, next);
     }
 }
