@@ -28,7 +28,6 @@ export default class Menu {
         this.handlingMenu = document.querySelector("#handling-menu");
         this.resultsMenu = document.querySelector("#results-menu");
         this.editQueueMenu = document.querySelector("#edit-queue-menu");
-        this.lookMenu = document.querySelector("#look-menu");
         this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
 
         // Main menu
@@ -53,10 +52,7 @@ export default class Menu {
         this.gameMenuButton = document.querySelector(".game-menu-button");
         this.gameControlsButton = document.querySelector(".game-controls-button");
 
-        // Look ahead menu
-        this.lookaheadPiecesInput = document.querySelector("#lookahead");
-        this.lookaheadPlayButton = document.querySelector(".lookahead-play");
-        this.lookaheadInstructions = document.querySelector(".lookahead-instructions");
+        // Look ahead ready menu
         this.lookaheadPiecesBottomInput = document.querySelector("#lookahead-pieces-input");
 
         // Control Menu
@@ -178,23 +174,8 @@ export default class Menu {
             this.activeMenu = "controls";
         });
 
-
-        // Lookahead menu
-        this.lookaheadPiecesInput.addEventListener("blur", ev => this.validateLookahead(ev.target));
-        this.lookaheadPlayButton.addEventListener("click", ev => {
-            if (!this.validateLookahead(this.lookaheadPiecesInput)) {
-                return;
-            }
-
-            let numLookaheadPieces = Number(this.lookaheadPiecesInput.value);
-            this.game.setLookaheadPieces(numLookaheadPieces);
-
-            this.hide(this.lookMenu);
-            this.showLookaheadReadyMenu();
-        });
-
-        this.lookaheadPiecesBottomInput.addEventListener("blur", ev => this.validateAndChange());
-
+        // Lookahead ready menu
+        this.lookaheadPiecesBottomInput.addEventListener("blur", () => this.validateAndChange());
 
         // Controls Menu
         this.controlsDoneButton.addEventListener("click", ev => {
@@ -253,7 +234,6 @@ export default class Menu {
         }
         let numLookaheadPieces = Number(pieceInput.value);
         this.game.setLookaheadPieces(numLookaheadPieces);
-        this.lookaheadPiecesInput.value = numLookaheadPieces;
     }
 
     addCurrentKeybindsToControlsMenu() {
@@ -278,7 +258,6 @@ export default class Menu {
 
     populateLookaheadReadyMenu() {
         let piecesToPlace = this.game.mode.remainingLookaheadPieces();
-        // this.lookaheadInstructions.innerHTML = `Get ready to place ${piecesToPlace} pieces.`;
         this.lookaheadPiecesBottomInput.value = piecesToPlace;
     }
 
@@ -465,7 +444,7 @@ export default class Menu {
     inputFocused() {
         let e = document.activeElement;
         return this.DASInput === e || this.ARRInput === e || this.SDFInput === e ||
-            this.holdInput === e || this.nextInput === e || this.lookaheadPiecesInput === e || this.lookaheadPiecesBottomInput === e;
+            this.holdInput === e || this.nextInput === e || this.lookaheadPiecesBottomInput === e;
     }
 
     previousScreen() {
@@ -508,12 +487,6 @@ export default class Menu {
             this.hide(this.editQueueMenu);
             this.activeMenu = "";
             this.game.play();
-        }
-
-        else if (this.activeMenu === "look") {
-            this.hide(this.lookMenu);
-            this.show(this.mainMenu);
-            this.activeMenu = "main";
         }
     }
 

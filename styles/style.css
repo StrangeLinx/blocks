@@ -328,22 +328,6 @@ label {
     color: #bc6dc4;
 }
 
-.menu-option.look-option {
-    flex-direction: column;
-    height: 4rem;
-    padding-bottom: 0.7rem;
-}
-
-.menu-option.look-option label {
-    padding: 0.5rem 1rem;
-}
-
-.menu-option.look-option input {
-    /* padding: 0.1rem 1rem; */
-    width: 40%;
-    height: 100%;
-}
-
 .menu#lookahead-ready-menu {
     /* position bottom center */
     position: absolute;
