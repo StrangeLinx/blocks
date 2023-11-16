@@ -29,7 +29,7 @@ body {
         "hold grid next"
         "stats grid next"
         "stats grid menu"
-        "stats grid controls";
+        "stats grid settings";
     gap: 5px;
 }
 
@@ -230,7 +230,7 @@ body {
 
 .menu-option,
 .game-menu-button,
-.game-controls-button {
+.game-settings-button {
     font-family: inherit;
     font-size: 1.1rem;
     font-weight: bold;
@@ -280,17 +280,17 @@ label {
     grid-area: menu;
 }
 
-.game-controls-button {
-    grid-area: controls;
+.game-settings-button {
+    grid-area: settings;
 }
 
 .game-menu-button,
-.game-controls-button {
+.game-settings-button {
     color: rgb(71, 71, 71);
 }
 
 .game-menu-button:hover,
-.game-controls-button:hover,
+.game-settings-button:hover,
 .menu-option:hover {
     border: 2px solid white;
     cursor: pointer;
@@ -299,7 +299,7 @@ label {
 }
 
 .game-menu-button:active,
-.game-controls-button:active,
+.game-settings-button:active,
 .menu-option:active {
     border: 2px solid black;
     border: 2px solid rgba(0, 0, 0, 0);

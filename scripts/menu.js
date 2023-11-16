@@ -50,7 +50,7 @@ export default class Menu {
 
         // In game
         this.gameMenuButton = document.querySelector(".game-menu-button");
-        this.gameControlsButton = document.querySelector(".game-controls-button");
+        this.gameSettingsButton = document.querySelector(".game-settings-button");
 
         // Look ahead ready menu
         this.lookaheadPiecesBottomInput = document.querySelector("#lookahead-pieces-input");
@@ -122,11 +122,7 @@ export default class Menu {
             this.show(this.handlingMenu);
         });
 
-        this.settingsDoneButton.addEventListener("click", () => {
-            this.hide(this.settingsMenu);
-            this.activeMenu = "main";
-            this.show(this.mainMenu);
-        });
+        this.settingsDoneButton.addEventListener("click", () => this.hideSettings());
 
         // In Game
         this.gameMenuButton.addEventListener("click", ev => {
@@ -152,14 +148,14 @@ export default class Menu {
             this.activeMenu = "main";
         });
 
-        this.gameControlsButton.addEventListener("click", ev => {
-            this.gameControlsButton.blur();
+        this.gameSettingsButton.addEventListener("click", () => {
+            this.gameSettingsButton.blur();
             if (this.activeMenu === "lookReady") {
                 this.game.pause();
                 this.hide(this.lookaheadReadyMenu);
                 this.directToGame = true;
-                this.show(this.controlsMenu);
-                this.activeMenu = "controls";
+                this.show(this.settingsMenu);
+                this.activeMenu = "settings";
                 return;
             }
 
@@ -170,17 +166,15 @@ export default class Menu {
             this.game.pause();
 
             this.directToGame = true;
-            this.show(this.controlsMenu);
-            this.activeMenu = "controls";
+            this.show(this.settingsMenu);
+            this.activeMenu = "settings";
         });
 
         // Lookahead ready menu
         this.lookaheadPiecesBottomInput.addEventListener("blur", () => this.validateAndChange());
 
         // Controls Menu
-        this.controlsDoneButton.addEventListener("click", ev => {
-            this.hideControls();
-        });
+        this.controlsDoneButton.addEventListener("click", () => this.hideControls());
 
         for (let i = 0; i < this.keybindButtons.length; i++) {
             this.keybindButtons[i].addEventListener("click", ev => {
@@ -389,21 +383,27 @@ export default class Menu {
         this.activeMenu = "results";
     }
 
+    hideSettings() {
+        if (this.directToGame) {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "";
+            this.directToGame = false;
+            this.game.play();
+        } else {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "main";
+            this.show(this.mainMenu);
+        }
+    }
+
     hideControls() {
         if (this.activeKeybindButton) {
             this.activeKeybindButton.classList.remove("pending-user-input");
             this.activeKeybindButton = "";
         }
-        if (this.directToGame) {
-            this.hide(this.controlsMenu);
-            this.activeMenu = "";
-            this.directToGame = false;
-            this.game.play();
-        } else {
-            this.hide(this.controlsMenu);
-            this.show(this.settingsMenu);
-            this.activeMenu = "settings";
-        }
+        this.hide(this.controlsMenu);
+        this.activeMenu = "settings";
+        this.show(this.settingsMenu);
     }
 
     press(key) {
@@ -461,9 +461,7 @@ export default class Menu {
         }
 
         else if (this.activeMenu === "settings") {
-            this.hide(this.settingsMenu);
-            this.activeMenu = "main";
-            this.show(this.mainMenu);
+            this.hideSettings();
         }
 
         else if (this.activeMenu === "controls") {
