@@ -10,7 +10,7 @@ export default class Mode {
         if (type) {
             this.type = type;
         }
-        this.menuPause = false;
+        this.menuPause = true;
         this.blind = false;
         this.win = false;
         this.piecesPlaced = 0;

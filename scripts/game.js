@@ -619,9 +619,8 @@ export default class Game {
             return;
         }
 
-        this.updateMode("free");
-        this.saveState();
         this.restartOnModeChange = false;
+        this.saveState();
 
         this.grid.setGrid(grid);
         this.updateHold(hold);
