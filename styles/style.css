@@ -358,6 +358,43 @@ label {
     width: 2ch;
 }
 
+.restore-on-drop {
+    position: relative;
+}
+
+.restore-on-drop::after {
+    position: absolute;
+    top: -0.9rem;
+    right: 0.1rem;
+
+    content: "default";
+    font-size: 0.9rem;
+    padding: 0.2rem;
+
+    border-radius: 3px;
+    border: 1px solid black;
+    background-color: black;
+    transition: 0.5s ease-out
+}
+
+.restore-on-drop:hover::after {
+    border: 1px solid white;
+    transition: 0.1s;
+}
+
+.restore-option.user-choice {
+    border: 2px solid #7ACD44;
+}
+
+.restore-option.user-choice:hover {
+    border: 2px solid #c8ffc5;
+}
+
+.restore-option.user-choice:active {
+    border: 2px solid black;
+    border: 2px solid rgba(0, 0, 0, 0);
+}
+
 span.invalid {
     color: rgb(255, 119, 65);
 }

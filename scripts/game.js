@@ -15,6 +15,7 @@ export default class Game {
 
         this.new();
 
+        this.undoOnDrop = true;
         this.countdownTimeout;
         this.startCountdown = false;
         this.countingDown = false;
@@ -27,6 +28,7 @@ export default class Game {
         this.mode.new();
         this.mode.menuPause = fromMenu;
         this.restartOnModeChange = true;
+        this.lastMove = "";
 
         this.pieceToReveal = "";
 
@@ -227,7 +229,7 @@ export default class Game {
 
     restart(save = false) {
         if (save) {
-            this.saveState();
+            this.saveState("restart");
         }
         this.new();
 
@@ -270,6 +272,8 @@ export default class Game {
 
         // Check it's a valid move
         if (this.grid.valid(shiftedPiece)) {
+            this.saveState("shift");
+
             // Replace current piece with shifted piece
             this.bag.setCurrentPiece(shiftedPiece);
             this.setUpdatedGrid(true);
@@ -281,8 +285,15 @@ export default class Game {
     }
 
     shiftFloor() {
+        let piece = this.bag.getCurrentPiece();
+
+        // Calculate if move will move and save (before moving)
+        if (this.grid.validYShift(piece, -1)) {
+            this.saveState("shiftFloor");
+        }
+
         // Check if piece is shifted to the floor
-        if (this.calculateDrop(this.bag.getCurrentPiece())) {
+        if (this.calculateDrop(piece)) {
 
             // update status only if shifted
             this.setUpdatedGrid(true);
@@ -313,6 +324,14 @@ export default class Game {
     calculateWall(piece, x) {
         let shifted = false;
 
+        // Save before shifting
+        let direction = x === -1 ? "leftWall" : "rightWall";
+        if (this.grid.validXShift(piece, x)) {
+            this.saveState(direction);
+            piece.shift(x, 0);
+            shifted = true;
+        }
+
         // Shift piece until a wall (or another piece) is hit
         while (this.grid.validXShift(piece, x)) {
             piece.shift(x, 0);
@@ -323,7 +342,7 @@ export default class Game {
     }
 
     drop() {
-        this.saveState();
+        this.saveState("drop");
 
         const piece = this.bag.place();
 
@@ -426,6 +445,7 @@ export default class Game {
         // Check if current rotation is valid
         rotatedPiece.rotate(r);
         if (this.grid.valid(rotatedPiece)) {
+            this.saveState("rotate");
             this.bag.setCurrentPiece(rotatedPiece);
             this.updatedGrid = true;
 
@@ -447,6 +467,7 @@ export default class Game {
 
             // Check if it's a valid kick
             if (this.grid.valid(kickedPiece)) {
+                this.saveState("rotate");
                 this.bag.setCurrentPiece(kickedPiece);
                 this.updatedGrid = true;
                 this.checkTSpin(kickedPiece, newRotation, currentRotation, i + 1);
@@ -543,6 +564,11 @@ export default class Game {
     }
 
     hold() {
+        if (!this.bag.validToHold()) {
+            return;
+        }
+
+        this.saveState("hold");
         let [updatedHold, updatedNext] = this.bag.hold();
 
         // updateHold is false when player tried holding twice in a row
@@ -581,12 +607,13 @@ export default class Game {
         this.updatedGameOver = true;
     }
 
-    saveState() {
+    saveState(move) {
         if (!this.mode.allowSave()) {
             return;
         }
 
         this.save.save(this);
+        this.lastMove = move;
     }
 
     undo() {
@@ -620,7 +647,7 @@ export default class Game {
         }
 
         this.restartOnModeChange = false;
-        this.saveState();
+        this.saveState("load");
 
         this.grid.setGrid(grid);
         this.updateHold(hold);

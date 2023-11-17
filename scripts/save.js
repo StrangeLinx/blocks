@@ -13,10 +13,10 @@ export default class Save {
 
     save(game) {
         // This (game) object size is max ~3500 bytes.
-        // Every 1000 drops is ~3.5MB which is ~5 minutes of game play at 3.33 pps (really fast)
+        // Every 5000 moves is less than 17.5MB which is ~5 minutes of efficient game play at 3.33 pps (really fast)
         // Save around 5 minutes of (fast) game play history
 
-        if (this.history.length > 1000) {
+        if (this.history.length > 5000) {
             this.history.shift();
         }
 
@@ -27,19 +27,28 @@ export default class Save {
     }
 
     undo(game) {
-        if (this.history.length === 0) {
-            return;
-        }
-        this.future.push(this.cloneGame(game));
-        this.restoreFromState(game, this.history.pop());
+        do {
+            // If nothing to check you're done
+            if (this.history.length === 0) {
+                break;
+            }
+            // Undo
+            this.future.push(this.cloneGame(game));
+            this.restoreFromState(game, this.history.pop());
+
+            // If user preference is to undo on drop,
+            // keep undoing until they're last move is drop
+        } while (game.undoOnDrop && game.lastMove !== "drop");
     }
 
     redo(game) {
-        if (this.future.length === 0) {
-            return;
-        }
-        this.history.push(this.cloneGame(game));
-        this.restoreFromState(game, this.future.pop());
+        do {
+            if (this.future.length === 0) {
+                break;
+            }
+            this.history.push(this.cloneGame(game));
+            this.restoreFromState(game, this.future.pop());
+        } while (game.undoOnDrop && game.lastMove !== "drop");
     }
 
     clear() {
@@ -69,8 +78,9 @@ export default class Save {
         clone.piecesPlaced = game.piecesPlaced;
         clone.totalAttack = game.totalAttack;
         clone.restartOnModeChange = game.restartOnModeChange;
+        clone.lastMove = game.lastMove;
 
-        // Keep current startTime and timeElapsed
+        // Keep current startTime, timeElapsed, undoOnDrop preference
 
     }
 
@@ -101,10 +111,11 @@ export default class Save {
     cloneBag(clone, game) {
         clone.bag = new Bag();
         clone.bag.held = game.bag.held;
-        clone.bag.holdPiece = game.bag.holdPiece ? new Piece(game.bag.holdPiece.type) : "";
+        clone.bag.holdPiece = clone.bag.clonePiece(game.bag.holdPiece);
         clone.bag.queue = [];
         for (let i = 0; i < game.bag.queue.length; i++) {
-            clone.bag.queue.push(new Piece(game.bag.queue[i].type));
+            let clonedPiece = clone.bag.clonePiece(game.bag.queue[i]);
+            clone.bag.queue.push(clonedPiece);
         }
     }
 
@@ -137,6 +148,7 @@ export default class Save {
         game.piecesPlaced = state.piecesPlaced;
         game.totalAttack = state.totalAttack;
         game.restartOnModeChange = state.restartOnModeChange;
+        game.lastMove = state.lastMove;
 
     }
 }

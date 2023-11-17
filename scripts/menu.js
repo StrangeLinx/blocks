@@ -26,6 +26,7 @@ export default class Menu {
         this.settingsMenu = document.querySelector("#settings-menu");
         this.controlsMenu = document.querySelector("#controls-menu");
         this.handlingMenu = document.querySelector("#handling-menu");
+        this.restoreMenu = document.querySelector("#restore-menu");
         this.resultsMenu = document.querySelector("#results-menu");
         this.editQueueMenu = document.querySelector("#edit-queue-menu");
         this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
@@ -46,6 +47,7 @@ export default class Menu {
         // Settings menu
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
+        this.restoreButton = document.querySelector(".restore-button");
         this.settingsDoneButton = document.querySelector(".settings-done-button");
 
         // In game
@@ -64,6 +66,11 @@ export default class Menu {
         this.ARRInput = document.querySelector("#ARR");
         this.SDFInput = document.querySelector("#SDF");
         this.handlingDoneButton = document.querySelector(".handling-done");
+
+        // Restore Menu
+        this.restoreDropButton = document.querySelector(".restore-on-drop");
+        this.restoreMoveButton = document.querySelector(".restore-on-move");
+        this.restoreDoneButton = document.querySelector(".restore-done");
 
         // In-game edit queue menu
         this.holdInput = document.querySelector("#hold-queue");
@@ -120,6 +127,12 @@ export default class Menu {
             this.hide(this.settingsMenu);
             this.activeMenu = "handling";
             this.show(this.handlingMenu);
+        });
+
+        this.restoreButton.addEventListener("click", () => {
+            this.hide(this.settingsMenu);
+            this.activeMenu = "restore";
+            this.show(this.restoreMenu);
         });
 
         this.settingsDoneButton.addEventListener("click", () => this.hideSettings());
@@ -195,6 +208,32 @@ export default class Menu {
             this.hide(this.handlingMenu);
             this.show(this.settingsMenu);
             this.activeMenu = "settings";
+        });
+
+        // Restore (Undo / Redo) preferences
+        this.loadUserRestorePreference();
+        this.restoreDropButton.addEventListener("click", ev => {
+            this.game.undoOnDrop = true;
+            this.restoreDropButton.classList.add("user-choice");
+            this.restoreMoveButton.classList.remove("user-choice");
+
+            if (this.controls.localStorageSupport) {
+                localStorage.setItem("restore", "drop");
+            }
+        });
+        this.restoreMoveButton.addEventListener("click", ev => {
+            this.game.undoOnDrop = false;
+            this.restoreMoveButton.classList.add("user-choice");
+            this.restoreDropButton.classList.remove("user-choice");
+
+            if (this.controls.localStorageSupport) {
+                localStorage.setItem("restore", "move");
+            }
+        });
+        this.restoreDoneButton.addEventListener("click", ev => {
+            this.hide(this.restoreMenu);
+            this.activeMenu = "settings";
+            this.show(this.settingsMenu);
         });
 
         // Edit Queue
@@ -288,6 +327,30 @@ export default class Menu {
             ev.target.classList.remove("invalid");
         }
 
+    }
+
+    loadUserRestorePreference() {
+        let restorePreference;
+
+        // Retrieve user preference
+        if (this.controls.localStorageSupport()) {
+            restorePreference = localStorage.getItem("restore");
+        }
+
+        // Default restore option
+        if (!restorePreference) {
+            restorePreference = "drop";
+        }
+
+        if (restorePreference === "drop") {
+            this.game.undoOnDrop = true;
+            this.restoreDropButton.classList.add("user-choice");
+            this.restoreMoveButton.classList.remove("user-choice");
+        } else {
+            this.game.undoOnDrop = false;
+            this.restoreMoveButton.classList.add("user-choice");
+            this.restoreDropButton.classList.remove("user-choice");
+        }
     }
 
     updateQueue(ev, hold) {
@@ -472,6 +535,12 @@ export default class Menu {
             this.hide(this.handlingMenu);
             this.show(this.settingsMenu);
             this.activeMenu = "settings";
+        }
+
+        else if (this.activeMenu === "restore") {
+            this.hide(this.restoreMenu);
+            this.activeMenu = "settings";
+            this.show(this.settingsMenu);
         }
 
         else if (this.activeMenu === "results") {

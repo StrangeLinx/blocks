@@ -40,6 +40,15 @@ export default class Bag {
         return piece;
     }
 
+    validToHold() {
+        // Prevent allowing holding twice in a row
+        if (this.held) {
+            return false;
+        }
+
+        return true;
+    }
+
     hold() {
         // Return [held, updated next]
         // Can't hold twice in a row
@@ -75,6 +84,9 @@ export default class Bag {
     }
 
     clonePiece(piece) {
+        if (!piece) {
+            return "";
+        }
         return new Piece(piece.type, piece.rot, piece.x, piece.y);
     }
 
