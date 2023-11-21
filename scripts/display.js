@@ -21,6 +21,22 @@ export default class Display {
         this.bindHoldNextEvents();
     }
 
+    updateQueueWidth() {
+        let unit = 1.5;
+        let width = unit * this.nextCols;
+        this.next.style.width = `${width}rem`;
+    }
+
+    updateQueueSize(queueSize) {
+        let n = Math.floor((queueSize - 1) / 5);
+        if (n == -1) {
+            n = 0;
+        }
+        this.nextCols = 6 + n * 5;
+        this.createNextCells();
+        this.updateQueueWidth();
+    }
+
     createGridProperties() {
         this.rows = 20;
         this.cols = 10;
@@ -41,6 +57,7 @@ export default class Display {
         this.nextCells = [];
         this.hold = document.querySelector("#holdPiece");
         this.next = document.querySelector("#next");
+        
 
         // Stats
         this.linesDisplay = document.querySelector("#lines-stat");
@@ -93,9 +110,10 @@ export default class Display {
         this.hold.style.width = `${width}rem`;
         this.hold.style.height = `${height}rem`;
 
-        // Queue 16 rows and 6 columns
+        // Queue has 16 rows
+        this.updateQueueWidth();
         height = unit * this.nextRows;
-        this.next.style.width = `${width}rem`;
+        
         this.next.style.height = `${height}rem`;
     }
 
@@ -150,6 +168,9 @@ export default class Display {
     }
 
     createNextCells() {
+        this.next.innerHTML = "";
+        this.nextCells = [];
+        this.next.style.gridTemplateColumns = `repeat(${this.nextCols}, 1fr)`;
         for (let r = 0; r < this.nextRows; r++) {
             let row = [];
             for (let c = 0; c < this.nextCols; c++) {
@@ -266,8 +287,11 @@ export default class Display {
     setShowEditQueueMenu(update) {
         this.showEditQueueMenu = update;
     }
-
-    removeColorPieceAttributes(square) {
+    /**
+     * Removes coloring from classlist of div element
+     * @param {HTMLDivElement} square 
+     */
+    removeColor(square) {
         let pieceTypes = "goiljstz";
         for (let type of pieceTypes) {
             square.classList.remove(type);
@@ -277,7 +301,12 @@ export default class Display {
         square.classList.remove("outline");
         square.classList.remove("empty");
     }
-
+    /**
+     * Adds or removes blind class from a div element depending on blindness,
+     * And gives it color according to piece type
+     * @param {HTMLDivElement} square 
+     * @param {String} type 
+     */
     updateSquare(square, type) {
         square.classList.add(type);
         if (this.blind) {
@@ -297,7 +326,7 @@ export default class Display {
                 if (desiredSquare === "") {
                     desiredSquare = "outline";
                 }
-                this.removeColorPieceAttributes(currentSquare);
+                this.removeColor(currentSquare);
                 this.updateSquare(currentSquare, desiredSquare);
             }
         }
@@ -310,7 +339,7 @@ export default class Display {
                 if (desiredSquare === "") {
                     desiredSquare = "empty";
                 }
-                this.removeColorPieceAttributes(currentSquare);
+                this.removeColor(currentSquare);
                 this.updateSquare(currentSquare, desiredSquare);
             }
         }
@@ -319,6 +348,10 @@ export default class Display {
         this.drawPiece(currentPiece);
     }
 
+    /**
+     * 
+     * @param {*} piece 
+     */
     drawPiece(piece) {
         if (!piece) {
             return;
@@ -327,7 +360,7 @@ export default class Display {
             let r = piece.y + piece.span[i].y;
             let c = piece.x + piece.span[i].x;
             let currentSquare = this.gridCells[r][c];
-            this.removeColorPieceAttributes(currentSquare);
+            this.removeColor(currentSquare);
             this.updateSquare(currentSquare, piece.type);
         }
     }
@@ -336,7 +369,7 @@ export default class Display {
         for (let r = 0; r < this.holdRows; r++) {
             for (let c = 0; c < this.holdCols; c++) {
                 let currentSquare = this.holdCells[r][c];
-                this.removeColorPieceAttributes(currentSquare);
+                this.removeColor(currentSquare);
                 this.updateSquare(currentSquare, "empty");
             }
         }
@@ -359,7 +392,7 @@ export default class Display {
         for (let r = 0; r < this.nextRows; r++) {
             for (let c = 0; c < this.nextCols; c++) {
                 let currentSquare = this.nextCells[r][c];
-                this.removeColorPieceAttributes(currentSquare);
+                this.removeColor(currentSquare);
                 this.updateSquare(currentSquare, "empty");
             }
         }
@@ -370,14 +403,22 @@ export default class Display {
 
         let xCenter = 2;
         let yCenter = 2;
-        pieces.forEach(piece => {
+        let pieceNum = 0;
+        const verticalSlots = 5;
+        for (let piece of pieces) {
+            pieceNum += 1;
             for (let i = 0; i < piece.span.length; i++) {
                 let row = yCenter - piece.span[i].y;
                 let col = xCenter + piece.span[i].x;
-                this.nextCells[row][col].classList.add(piece.type);
+                let currCell = this.nextCells[row][col];
+                currCell.classList.add(piece.type);
             }
             yCenter += 3;
-        });
+            if (pieceNum % verticalSlots == 0) {
+                xCenter += 5;
+                yCenter = 2;
+            }
+        }
     }
 
     setBlindPiecePlacement(piece) {

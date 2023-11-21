@@ -6,15 +6,38 @@ export default class Bag {
         this.types = ['o', 'i', 'l', 'j', 's', 't', 'z'];
         this.held = false;
         this.holdPiece = "";
+        this.queueSize = 5;
         this.queue = [];
-        this.addPiecesToQueue();
     }
 
-    addPiecesToQueue() {
-        this.shuffleTypes();
-        this.types.forEach(type => {
-            this.queue.push(new Piece(type));
-        });
+    addBagsToQueue(bags=1) {
+        for (let i = 0; i < bags; i++) {
+            this.shuffleTypes();
+            this.types.forEach(type => {
+                this.queue.push(new Piece(type));
+            });
+        }
+    }
+
+    new() {
+        this.held = false;
+        this.holdPiece = "";
+        this.queue = [];
+        let n = this.queueSize / 7;
+        if (n <= 0) {
+            n = 1;
+        }
+        this.addBagsToQueue(n);
+    }
+
+    updateQueueSize(size) {
+        this.queueSize = size;
+        // Need to add n bags
+        // If size == 15, queue.length == 6, then will add 2 bags
+        let n = Math.ceil((size - this.queue.length) / 7);
+        if (n > 0) {
+            this.addBagsToQueue(n);
+        }
     }
 
     shuffleTypes() {
@@ -32,9 +55,9 @@ export default class Bag {
 
     place() {
         let piece = this.queue.shift();
-        // Ensure at least 7 pieces in queue
-        if (this.queue.length < 7) {
-            this.addPiecesToQueue();
+        // Ensure bag is large enough to accommodate queueSize
+        if (this.queue.length <= this.queueSize) {
+            this.addBagsToQueue();
         }
         this.held = false;
         return piece;
@@ -95,7 +118,7 @@ export default class Bag {
     }
 
     getNextPieces() {
-        return this.queue.slice(1, 6);
+        return this.queue.slice(1, this.queueSize + 1);
     }
 
     getAllNextPieces() {
@@ -132,8 +155,8 @@ export default class Bag {
         }
 
         // Ensure there's enough in queue
-        if (this.queue.length < 7) {
-            this.addPiecesToQueue();
+        if (this.queue.length <= this.queueSize) {
+            this.addBagsToQueue();
         }
 
     }
