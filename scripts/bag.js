@@ -23,7 +23,11 @@ export default class Bag {
         this.held = false;
         this.holdPiece = "";
         this.queue = [];
-        this.addBagsToQueue(this.queueSize / 7);
+        let n = this.queueSize / 7;
+        if (n <= 0) {
+            n = 1;
+        }
+        this.addBagsToQueue(n);
     }
 
     updateQueueSize(size) {
