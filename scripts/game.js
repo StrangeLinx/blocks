@@ -12,6 +12,7 @@ export default class Game {
         this.attack = new Attack();  // attack table
         this.save = new Save();
         this.mode = new Mode();
+        this.bag = new Bag();
 
         this.new();
 
@@ -24,7 +25,7 @@ export default class Game {
 
     new(fromMenu = false) {
         this.grid = new Grid();
-        this.bag = new Bag();
+        this.bag.new();
         this.mode.new();
         this.mode.menuPause = fromMenu;
         this.restartOnModeChange = true;
@@ -70,6 +71,11 @@ export default class Game {
         }
         // Otherwise it's relating to a piece
         this.pieceUpdate(move);
+    }
+
+    updateQueueSize(size) {
+        this.bag.updateQueueSize(size);
+        this.updatedNext = true;
     }
 
     sandbox() {

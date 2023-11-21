@@ -74,7 +74,7 @@ function draw() {
 const game = new Game();
 const controls = new Controls(game);
 const display = new Display(game);
-const menu = new Menu(game, controls);
+const menu = new Menu(game, controls, display);
 
 document.addEventListener("keydown", ev => {
     if (menu.active()) {

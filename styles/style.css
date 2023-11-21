@@ -69,7 +69,6 @@ body {
 #next {
     grid-area: next;
     grid-template-rows: repeat(16, 1fr);
-    grid-template-columns: repeat(6, 1fr);
 }
 
 #stats-container {
@@ -247,10 +246,15 @@ body {
     align-items: center;
 }
 
+
+
 .menu-option {
     width: 13rem;
     height: 2.5rem;
 }
+
+
+
 
 input {
     display: inline-block;
@@ -274,6 +278,16 @@ label {
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
+}
+
+
+#edit-queue-menu .edit-queue-option {
+    padding: 0 .5rem;
+    width: 12rem;
+    justify-content: space-between;
+}
+#edit-queue-menu .edit-queue-option label {
+    padding: 0;
 }
 
 .game-menu-button {

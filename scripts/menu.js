@@ -2,10 +2,11 @@ import processImage from "./image.js";
 
 export default class Menu {
 
-    constructor(game, controls) {
+    constructor(game, controls, display) {
 
         this.game = game;
         this.controls = controls;
+        this.display = display;
 
         this.initMenus();
         this.addButtonClickEvents();
@@ -73,9 +74,11 @@ export default class Menu {
         this.restoreDoneButton = document.querySelector(".restore-done");
 
         // In-game edit queue menu
+        this.queueSizeInput = document.querySelector("#queue-size");
         this.holdInput = document.querySelector("#hold-queue");
         this.nextInput = document.querySelector("#next-queue");
         this.editQueueDoneButton = document.querySelector(".edit-queue-done");
+        
 
         // Results Menu
         this.resultItems = document.querySelectorAll(".result-item");
@@ -239,6 +242,7 @@ export default class Menu {
         // Edit Queue
         this.holdInput.addEventListener("blur", ev => this.updateQueue(ev, true));
         this.nextInput.addEventListener("blur", ev => this.updateQueue(ev, false));
+        this.queueSizeInput.addEventListener("blur", ev => this.updateQueueSize(ev.target.value));
         this.editQueueDoneButton.addEventListener("click", ev => {
             this.hide(this.editQueueMenu);
             this.activeMenu = "";
@@ -257,6 +261,29 @@ export default class Menu {
             this.show(this.mainMenu);
             this.activeMenu = "main";
         });
+    }
+
+    updateQueueSize(size) {
+        if (!this.validateQueueSize(size)) {
+            return;
+        }
+        size = Number(size);
+        this.display.updateQueueSize(size);
+        this.game.updateQueueSize(size);
+    }
+
+    validateQueueSize(size) {
+        size = Number(size);
+        if (!Number.isInteger(size)) {
+            return false;
+        }
+        if (size < 0) {
+            return false;
+        }
+        if (size > 20) {
+            return false;
+        }
+        return true;
     }
 
     validateAndChange() {
@@ -301,7 +328,7 @@ export default class Menu {
     }
 
     validateLookahead(pieceInput) {
-        const MAXLOOKAHEAD = 6;
+        const MAXLOOKAHEAD = this.game.bag.queueSize + 1;
         let pieces = Number(pieceInput.value);
         if (!(Number.isInteger(pieces) && 2 <= pieces && pieces <= MAXLOOKAHEAD)) {
             pieceInput.classList.add("invalid");
