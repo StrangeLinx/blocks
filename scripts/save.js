@@ -2,7 +2,6 @@ import Game from "./game.js";
 import Mode from "./mode.js";
 import Grid from "./grid.js";
 import Bag from "./bag.js";
-import Piece from "./piece.js";
 
 export default class Save {
 
@@ -117,6 +116,7 @@ export default class Save {
             let clonedPiece = clone.bag.clonePiece(game.bag.queue[i]);
             clone.bag.queue.push(clonedPiece);
         }
+        clone.bag.queueSize = game.bag.queueSize;
     }
 
     restoreFromState(game, state) {
@@ -135,7 +135,9 @@ export default class Save {
         game.mode.numLookaheadPieces = temp;
 
         // Properties
+        let currentQueueSize = game.bag.queueSize;
         game.bag = state.bag;
+        game.bag.updateQueueSize(currentQueueSize);
         game.grid = state.grid;
 
         game.linesCleared = state.linesCleared;

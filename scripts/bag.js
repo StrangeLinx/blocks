@@ -10,7 +10,14 @@ export default class Bag {
         this.queue = [];
     }
 
-    addBagsToQueue(bags=1) {
+    addPiecesToQueue(num) {
+        let bags = Math.ceil(num + 1 / 7);
+        if (bags > 0) {
+            this.addBagsToQueue(bags);
+        }
+    }
+
+    addBagsToQueue(bags = 1) {
         for (let i = 0; i < bags; i++) {
             this.shuffleTypes();
             this.types.forEach(type => {
@@ -34,10 +41,8 @@ export default class Bag {
         this.queueSize = size;
         // Need to add n bags
         // If size == 15, queue.length == 6, then will add 2 bags
-        let n = Math.ceil((size - this.queue.length) / 7);
-        if (n > 0) {
-            this.addBagsToQueue(n);
-        }
+        let piecesToAdd = size - this.queue.length;
+        this.addPiecesToQueue(piecesToAdd);
     }
 
     shuffleTypes() {
@@ -155,9 +160,7 @@ export default class Bag {
         }
 
         // Ensure there's enough in queue
-        if (this.queue.length <= this.queueSize) {
-            this.addBagsToQueue();
-        }
+        this.addPiecesToQueue(this.queueSize - this.queue.length);
 
     }
 

@@ -5,6 +5,7 @@
 }
 
 body {
+    position: relative;
     background-color: black;
     min-width: 100vw;
     min-height: 100vh;
@@ -21,16 +22,21 @@ body {
 */
 
 .game-container {
-    position: relative;
+    /* Position in the center vertically */
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -60%);
+
     display: grid;
-    grid-template-rows: auto auto 1fr 1fr;
+    grid-template-rows: auto auto auto auto auto;
     grid-template-columns: auto auto auto;
     grid-template-areas:
+        "overflow-nothing1 overflow overflow-nothing2"
         "hold grid next"
         "stats grid next"
         "stats grid menu"
-        "stats grid settings";
-    gap: 5px;
+        "stats grid settings"
+        "comment comment comment";
 }
 
 #grid,
@@ -39,9 +45,12 @@ body {
     display: grid;
     border: 2px solid white;
     border-radius: 3px;
+    margin: 5px;
+    margin-top: 0;
 }
 
 #grid {
+    position: relative;
     grid-area: grid;
     grid-template-rows: repeat(20, 1fr);
     grid-template-columns: repeat(10, 1fr);
@@ -51,13 +60,11 @@ body {
 
 #grid-overflow {
     display: grid;
+    grid-area: overflow;
     grid-template-rows: repeat(6, 1fr);
     grid-template-columns: repeat(10, 1fr);
-
-    position: absolute;
-    /* Center positioning */
-    left: 50%;
-    transform: translate(-50%, 0);
+    border: 7px solid black;
+    border-bottom: none;
 }
 
 #holdPiece {
@@ -286,6 +293,7 @@ label {
     width: 12rem;
     justify-content: space-between;
 }
+
 #edit-queue-menu .edit-queue-option label {
     padding: 0;
 }
@@ -343,13 +351,9 @@ label {
 }
 
 .menu#lookahead-ready-menu {
-    /* position bottom center */
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-    top: 30.5rem;
+    grid-area: comment;
     height: 3rem;
-    width: 15rem;
+    /* width: 15rem; */
     background-color: black;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -369,7 +373,7 @@ label {
 #lookahead-pieces-input {
     margin: 0;
     padding: 0 .5ch;
-    width: 2ch;
+    width: 3ch;
 }
 
 .restore-on-drop {

@@ -18,6 +18,7 @@ export default class Menu {
         this.directToGame = false;
 
         this.activeKeybindButton = "";
+        this.maxQueueSize = 20;
     }
 
     initMenus() {
@@ -78,7 +79,6 @@ export default class Menu {
         this.holdInput = document.querySelector("#hold-queue");
         this.nextInput = document.querySelector("#next-queue");
         this.editQueueDoneButton = document.querySelector(".edit-queue-done");
-        
 
         // Results Menu
         this.resultItems = document.querySelectorAll(".result-item");
@@ -242,7 +242,7 @@ export default class Menu {
         // Edit Queue
         this.holdInput.addEventListener("blur", ev => this.updateQueue(ev, true));
         this.nextInput.addEventListener("blur", ev => this.updateQueue(ev, false));
-        this.queueSizeInput.addEventListener("blur", ev => this.updateQueueSize(ev.target.value));
+        this.queueSizeInput.addEventListener("blur", () => this.updateQueueSize());
         this.editQueueDoneButton.addEventListener("click", ev => {
             this.hide(this.editQueueMenu);
             this.activeMenu = "";
@@ -263,24 +263,27 @@ export default class Menu {
         });
     }
 
-    updateQueueSize(size) {
+    updateQueueSize() {
+        let size = Number(this.queueSizeInput.value);
+
         if (!this.validateQueueSize(size)) {
+            this.queueSizeInput.classList.add("invalid");
             return;
         }
-        size = Number(size);
+
+        this.queueSizeInput.classList.remove("invalid");
         this.display.updateQueueSize(size);
         this.game.updateQueueSize(size);
     }
 
     validateQueueSize(size) {
-        size = Number(size);
         if (!Number.isInteger(size)) {
             return false;
         }
         if (size < 0) {
             return false;
         }
-        if (size > 20) {
+        if (size > this.maxQueueSize) {
             return false;
         }
         return true;
@@ -288,12 +291,28 @@ export default class Menu {
 
     validateAndChange() {
         let pieceInput = this.lookaheadPiecesBottomInput;
-        let validated = this.validateLookahead(pieceInput);
-        if (!validated) {
+
+        let adtEasterEgg = pieceInput.value.toLowerCase() === "adt";
+        let valid = this.validateLookahead(pieceInput) || adtEasterEgg;
+        if (!valid) {
+            pieceInput.classList.add("invalid");
             return;
         }
-        let numLookaheadPieces = Number(pieceInput.value);
-        this.game.setLookaheadPieces(numLookaheadPieces);
+
+        pieceInput.classList.remove("invalid");
+
+        let numPieces;
+        if (adtEasterEgg) {
+            numPieces = 1;
+        } else {
+            numPieces = Number(pieceInput.value);
+        }
+
+        this.game.setLookaheadPieces(numPieces);
+        if (numPieces > this.game.bag.queueSize) {
+            this.queueSizeInput.value = numPieces;
+            this.updateQueueSize();
+        }
     }
 
     addCurrentKeybindsToControlsMenu() {
@@ -328,14 +347,12 @@ export default class Menu {
     }
 
     validateLookahead(pieceInput) {
-        const MAXLOOKAHEAD = this.game.bag.queueSize + 1;
+        const MAXLOOKAHEAD = this.maxQueueSize + 1;
         let pieces = Number(pieceInput.value);
+
         if (!(Number.isInteger(pieces) && 2 <= pieces && pieces <= MAXLOOKAHEAD)) {
-            pieceInput.classList.add("invalid");
             return false;
         }
-
-        pieceInput.classList.remove("invalid");
         return true;
     }
 
@@ -439,10 +456,17 @@ export default class Menu {
             this.hide(this.lookaheadReadyMenu);
         }
 
+        this.addQueueSizeToMenu();
         this.addHoldPieceToMenu();
         this.addNextPiecesToMenu();
         this.show(this.editQueueMenu);
         this.activeMenu = "editQueue";
+    }
+
+    addQueueSizeToMenu() {
+        let size = this.game.bag.queueSize;
+        this.queueSizeInput.value = size;
+        this.queueSizeInput.classList.remove("invalid");
     }
 
     addHoldPieceToMenu() {
