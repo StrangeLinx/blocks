@@ -77,15 +77,17 @@ const display = new Display(game);
 const menu = new Menu(game, controls, display);
 
 document.addEventListener("keydown", ev => {
+    let key = ev.key.toLowerCase();
     if (menu.active()) {
-        menu.press(ev.key);
+        menu.press(key);
     } else {
-        controls.press(ev.key);
+        controls.press(key);
     }
 });
 
 document.addEventListener("keyup", ev => {
-    controls.release(ev.key);
+    let key = ev.key.toLowerCase();
+    controls.release(key);
 });
 
 window.requestAnimationFrame(main);

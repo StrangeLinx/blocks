@@ -46,8 +46,8 @@ export default class Controls {
 
         let version = localStorage.getItem("version");
 
-        if (version !== "1.1") {
-            localStorage.setItem("version", "1.1");
+        if (version !== "1.2") {
+            localStorage.setItem("version", "1.2");
             this.loadDefaultKeybinds();
             this.saveUserKeybindPreferences();
             return;
@@ -67,9 +67,9 @@ export default class Controls {
 
     loadDefaultKeybinds() {
         this.controls = {
-            "Left": "ArrowLeft",
-            "Right": "ArrowRight",
-            "Soft Drop": "ArrowDown",
+            "Left": "arrowleft",
+            "Right": "arrowright",
+            "Soft Drop": "arrowdown",
             // Spacebar
             "Hard Drop": " ",
             "Rotate CW": "x",
@@ -77,9 +77,9 @@ export default class Controls {
             "Rotate 180": "a",
             "Hold": "c",
             "Restart": "r",
-            "Pause": "Escape",
-            "Undo": ["Control", "z"],
-            "Redo": ["Control", "y"]
+            "Pause": "escape",
+            "Undo": ["control", "z"],
+            "Redo": ["control", "y"]
         };
         this.createPressed();
     }

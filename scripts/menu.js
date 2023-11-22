@@ -322,7 +322,7 @@ export default class Menu {
 
             // When key is space, make it apparent
             if (key === " ") {
-                key = "Space";
+                key = "space";
             }
 
             span.innerHTML = key;
