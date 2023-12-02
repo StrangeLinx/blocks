@@ -26,28 +26,59 @@ export default class Save {
     }
 
     undo(game) {
+        if (game.undoOnDrop) {
+            this.undoDrop(game);
+        } else {
+            this.undoMove(game);
+        }
+    }
+
+    undoDrop(game) {
         do {
-            // If nothing to check you're done
-            if (this.history.length === 0) {
+            // If nothing to undo you're done
+            if (!this.undoMove(game)) {
                 break;
             }
-            // Undo
-            this.future.push(this.cloneGame(game));
-            this.restoreFromState(game, this.history.pop());
 
-            // If user preference is to undo on drop,
             // keep undoing until they're last move is drop
-        } while (game.undoOnDrop && game.lastMove !== "drop");
+        } while (game.lastMove !== "drop" && game.lastMove !== "restart");
+    }
+
+    undoMove(game) {
+        // If nothing to check you're done
+        if (this.history.length === 0) {
+            return false;
+        }
+        // Undo
+        this.future.push(this.cloneGame(game));
+        this.restoreFromState(game, this.history.pop());
+        return true;
     }
 
     redo(game) {
+        if (game.undoOnDrop) {
+            this.redoDrop(game);
+        } else {
+            this.redoMove(game);
+        }
+    }
+
+    redoDrop(game) {
         do {
-            if (this.future.length === 0) {
+            if (!this.redoMove(game)) {
                 break;
             }
-            this.history.push(this.cloneGame(game));
-            this.restoreFromState(game, this.future.pop());
-        } while (game.undoOnDrop && game.lastMove !== "drop");
+        } while (game.lastMove !== "drop" && game.lastMove !== "restart");
+    }
+
+    redoMove(game) {
+        if (this.future.length === 0) {
+            return false;;
+        }
+
+        this.history.push(this.cloneGame(game));
+        this.restoreFromState(game, this.future.pop());
+        return true;
     }
 
     clear() {

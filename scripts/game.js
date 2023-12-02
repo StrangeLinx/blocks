@@ -239,6 +239,7 @@ export default class Game {
             this.saveState("restart");
         }
         this.new();
+        this.lastMove = "restart";
 
         this.mode.restart();
 
