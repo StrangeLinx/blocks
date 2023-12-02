@@ -253,15 +253,10 @@ body {
     align-items: center;
 }
 
-
-
 .menu-option {
     width: 13rem;
     height: 2.5rem;
 }
-
-
-
 
 input {
     display: inline-block;
@@ -400,14 +395,17 @@ label {
     transition: 0.1s;
 }
 
+#change-mode-menu .user-choice,
 .restore-option.user-choice {
     border: 2px solid #7ACD44;
 }
 
+#change-mode-menu .user-choice:hover,
 .restore-option.user-choice:hover {
     border: 2px solid #c8ffc5;
 }
 
+#change-mode-menu .user-choice:active,
 .restore-option.user-choice:active {
     border: 2px solid black;
     border: 2px solid rgba(0, 0, 0, 0);

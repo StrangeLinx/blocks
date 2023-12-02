@@ -109,10 +109,10 @@ export default class Menu {
         this.uploadButton.addEventListener("change", ev => this.loadGameFromImage(ev));
 
         // Change mode menu
-        this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
-        this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
-        this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
-        this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target.id));
+        this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
+        this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
+        this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
+        this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
         this.changeModeDoneButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
             this.activeMenu = "main";
@@ -611,10 +611,16 @@ export default class Menu {
         return this.activeMenu;
     }
 
-    updateGameModeFromMenu(type) {
-        this.hide(this.changeModeMenu);
-        this.activeMenu = "";
-        this.game.play(type);
+    updateGameModeFromMenu(buttonPressed) {
+        // Reset statuses
+        this.freeButton.classList.remove("user-choice");
+        this.b2bButton.classList.remove("user-choice");
+        this.lookButton.classList.remove("user-choice");
+        this.sprintButton.classList.remove("user-choice");
+
+        buttonPressed.classList.add("user-choice");
+
+        this.game.updateMode(buttonPressed.id);
     }
 
     async loadGameFromImage(ev) {
