@@ -11,7 +11,7 @@ export default class Bag {
     }
 
     addPiecesToQueue(num) {
-        let bags = Math.ceil(num + 1 / 7);
+        let bags = Math.ceil((num + 1) / 7);
         if (bags > 0) {
             this.addBagsToQueue(bags);
         }
@@ -30,11 +30,7 @@ export default class Bag {
         this.held = false;
         this.holdPiece = "";
         this.queue = [];
-        let n = this.queueSize / 7;
-        if (n <= 0) {
-            n = 1;
-        }
-        this.addBagsToQueue(n);
+        this.addPiecesToQueue(this.queueSize);
     }
 
     updateQueueSize(size) {
