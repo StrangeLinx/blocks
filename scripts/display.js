@@ -32,7 +32,14 @@ export default class Display {
         if (n == -1) {
             n = 0;
         }
-        this.nextCols = 6 + n * 5;
+
+        // Ensure only resizing on change
+        let newNextCols = 6 + n * 5;
+        if (this.nextCols === newNextCols) {
+            return;
+        }
+
+        this.nextCols = newNextCols;
         this.createNextCells();
         this.updateQueueWidth();
     }
@@ -57,7 +64,7 @@ export default class Display {
         this.nextCells = [];
         this.hold = document.querySelector("#holdPiece");
         this.next = document.querySelector("#next");
-        
+
 
         // Stats
         this.linesDisplay = document.querySelector("#lines-stat");
@@ -113,7 +120,7 @@ export default class Display {
         // Queue has 16 rows
         this.updateQueueWidth();
         height = unit * this.nextRows;
-        
+
         this.next.style.height = `${height}rem`;
     }
 
@@ -389,6 +396,8 @@ export default class Display {
     }
 
     drawNext(pieces) {
+        this.updateQueueSize(pieces.length);
+
         for (let r = 0; r < this.nextRows; r++) {
             for (let c = 0; c < this.nextCols; c++) {
                 let currentSquare = this.nextCells[r][c];

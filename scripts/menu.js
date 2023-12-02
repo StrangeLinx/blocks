@@ -272,7 +272,6 @@ export default class Menu {
         }
 
         this.queueSizeInput.classList.remove("invalid");
-        this.display.updateQueueSize(size);
         this.game.updateQueueSize(size);
     }
 
