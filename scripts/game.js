@@ -180,6 +180,7 @@ export default class Game {
 
         // Always restart if changing mode to sprint
         if (type === "sprint" && this.mode.change(type)) {
+            this.bag.updateQueueSize(5);
             this.new();
             this.save.clear();
             return;
