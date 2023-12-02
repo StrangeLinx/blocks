@@ -616,7 +616,7 @@ export default class Game {
     }
 
     saveState(move) {
-        if (!this.mode.allowSave()) {
+        if (!this.sandbox()) {
             return;
         }
 
@@ -628,20 +628,46 @@ export default class Game {
         if (!this.sandbox()) {
             return;
         }
-
-        this.save.undo(this);
+        if (this.mode.type === "lookahead") {
+            this.lookaheadUndo();
+        }
+        else {
+            this.save.undo(this);
+        }
 
         this.checkModePause();
+    }
+
+    lookaheadUndo() {
+        // Calculate amount of pieces to undo
+        let numLookaheadPiecesPlaced = this.mode.piecesPlaced - this.mode.previousPiecesPlaced;
+        if (numLookaheadPiecesPlaced === 0) {
+            numLookaheadPiecesPlaced = this.mode.numLookaheadPieces;
+        }
+
+        for (let i = 0; i < numLookaheadPiecesPlaced; i++) {
+            this.save.undoDrop(this);
+        };
     }
 
     redo() {
         if (!this.sandbox()) {
             return;
         }
-
-        this.save.redo(this);
+        if (this.mode.type === "lookahead") {
+            this.lookaheadRedo();
+        } else {
+            this.save.redo(this);
+        }
 
         this.checkModePause();
+    }
+
+    lookaheadRedo() {
+        // Redo the amount of lookahead pieces
+        for (let i = 0; i < this.mode.numLookaheadPieces; i++) {
+            this.save.redoDrop(this);
+        }
     }
 
     fillSquare(type, x, y) {

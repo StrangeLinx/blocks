@@ -68,13 +68,14 @@ export default class Mode {
                 this.showLookaheadReadyMenu = true;
             }
             // If player is blind and placed their pieces then un-blind
-            // If player is not blind then always blind
             else if (this.blind && this.placedLookaheadPieces()) {
                 this.blind = false;
                 this.shouldPause = true;
                 this.showLookaheadReadyMenu = true;
                 this.previousPiecesPlaced = this.piecesPlaced;
-            } else {
+            }
+            // If player is not blind then always blind
+            else {
                 this.blind = true;
             }
         }
@@ -92,23 +93,6 @@ export default class Mode {
         }
 
         return false;
-    }
-
-    allowSave() {
-        // Only in sandbox mode
-        if (!this.sandbox()) {
-            return false;
-        }
-        // Save on start
-        if (this.piecesPlaced === 0) {
-            return true;
-        }
-        if (this.type === "lookahead") {
-            // allowSave is called before the piece is dropped, 
-            // so we should save every time we've placed our pieces, and remaining lookahead pieces is refreshed
-            return this.remainingLookaheadPieces() === this.numLookaheadPieces;
-        }
-        return true;
     }
 
     remainingLookaheadPieces() {
