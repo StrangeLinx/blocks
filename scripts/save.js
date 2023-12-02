@@ -51,7 +51,9 @@ export default class Save {
         }
         // Undo
         this.future.push(this.cloneGame(game));
-        this.restoreFromState(game, this.history.pop());
+        const state = this.history.pop();
+        this.preserveBag(game, state);
+        this.restoreFromState(game, state);
         return true;
     }
 
@@ -148,6 +150,20 @@ export default class Save {
             clone.bag.queue.push(clonedPiece);
         }
         clone.bag.queueSize = game.bag.queueSize;
+    }
+
+    preserveBag(game, state) {
+        // When undoing, preserve player's current bag because it's extremely useful when practicing set-ups
+        // Note when undoing a drop, piece is just added to the queue (Ex: szil... -> jszil...)
+
+        // Add "undo" piece to game queue (if used) then move it to the restore state
+        if (game.lastMove === "drop") {
+            game.bag.queue.unshift(state.bag.cloneCurrentPiece());
+        } else {
+            game.bag.queue[0] = state.bag.getCurrentPiece();
+        }
+
+        state.bag.queue = game.bag.queue;
     }
 
     restoreFromState(game, state) {
