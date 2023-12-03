@@ -1,3 +1,4 @@
+import checkFinesse from "./finesse.js";
 
 export default class Mode {
 
@@ -18,6 +19,10 @@ export default class Mode {
         this.previousPiecesPlaced = 0;
         this.shouldPause = false;
         this.showLookaheadReadyMenu = false;
+
+        this.showFinesseTip = false;
+        this.hideFinesseTip = true;
+        this.finesseTip = "";
     }
 
     play() {
@@ -79,6 +84,12 @@ export default class Mode {
                 this.blind = true;
             }
         }
+
+        if (this.type === "finesse") {
+            this.showFinesseTip = false;
+            this.hideFinesseTip = true;
+            this.finesseTip = "";
+        }
     }
 
     /**
@@ -108,7 +119,24 @@ export default class Mode {
         this.numLookaheadPieces = numPieces;
     }
 
+    passFinesse(piece, keySequence) {
+        // Only fail in finesse mode
+        if (this.type !== "finesse") {
+            return true;
+        }
+
+        let [pass, tip] = checkFinesse(piece, keySequence);
+
+        if (pass) {
+            return true;
+        }
+
+        this.showFinesseTip = true;
+        this.finesseTip = tip;
+        return false;
+    }
+
     sandbox() {
-        return this.type === "free" || this.type === "b2b" || this.type === "lookahead";
+        return this.type === "free" || this.type === "b2b" || this.type === "lookahead" || this.type === "finesse";
     }
 }

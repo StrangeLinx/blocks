@@ -32,6 +32,7 @@ export default class Menu {
         this.resultsMenu = document.querySelector("#results-menu");
         this.editQueueMenu = document.querySelector("#edit-queue-menu");
         this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
+        this.finesseTipComment = document.querySelector("#finesse-tip-comment");
 
         // Main menu
         this.playButton = document.querySelector(".play-button");
@@ -43,6 +44,7 @@ export default class Menu {
         this.freeButton = document.querySelector(".free-button");
         this.b2bButton = document.querySelector(".b2b-button");
         this.lookButton = document.querySelector(".lookahead-button");
+        this.finesseButton = document.querySelector(".finesse-button");
         this.sprintButton = document.querySelector(".sprint-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
@@ -112,6 +114,7 @@ export default class Menu {
         this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
         this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
         this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
+        this.finesseButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
         this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
         this.changeModeDoneButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
@@ -147,6 +150,7 @@ export default class Menu {
             this.gameMenuButton.blur();
             if (this.activeMenu === "lookReady") {
                 this.game.pause();
+                this.lookaheadReadyMenu.style.gridArea = "none";
                 this.hide(this.lookaheadReadyMenu);
                 this.show(this.mainMenu);
                 this.activeMenu = "main";
@@ -168,6 +172,7 @@ export default class Menu {
             this.gameSettingsButton.blur();
             if (this.activeMenu === "lookReady") {
                 this.game.pause();
+                this.lookaheadReadyMenu.style.gridArea = "none";
                 this.hide(this.lookaheadReadyMenu);
                 this.directToGame = true;
                 this.show(this.settingsMenu);
@@ -445,13 +450,26 @@ export default class Menu {
 
     showLookaheadReadyMenu() {
         this.populateLookaheadReadyMenu();
+        this.lookaheadReadyMenu.style.gridArea = "comment";
         this.show(this.lookaheadReadyMenu);
         this.activeMenu = "lookReady";
+    }
+
+    showFinesseTipComment() {
+        this.finesseTipComment.style.gridArea = "comment";
+        this.finesseTipComment.innerHTML = this.game.getFinesseTip();
+        this.show(this.finesseTipComment);
+    }
+
+    hideFinesseTipComment() {
+        this.finesseTipComment.style.gridArea = "none";
+        this.hide(this.finesseTipComment);
     }
 
     showEditQueue() {
         if (this.activeMenu === "lookReady") {
             this.game.pause();
+            this.lookaheadReadyMenu.style.gridArea = "none";
             this.hide(this.lookaheadReadyMenu);
         }
 
@@ -531,6 +549,7 @@ export default class Menu {
             // User is permitted to have restart set to "i". This prevents potential interruption when typing into an input field
             return;
         } else if (this.activeMenu === "lookReady") {
+            this.lookaheadReadyMenu.style.gridArea = "none";
             this.hide(this.lookaheadReadyMenu);
             this.game.mode.menuPause = false; // Prevent showing instructions menu twice. Already showing menu.
             this.game.play();
@@ -616,6 +635,7 @@ export default class Menu {
         this.freeButton.classList.remove("user-choice");
         this.b2bButton.classList.remove("user-choice");
         this.lookButton.classList.remove("user-choice");
+        this.finesseButton.classList.remove("user-choice");
         this.sprintButton.classList.remove("user-choice");
 
         buttonPressed.classList.add("user-choice");

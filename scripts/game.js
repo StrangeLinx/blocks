@@ -350,6 +350,10 @@ export default class Game {
     }
 
     drop() {
+        if (!this.passFinesse(this.getCurrentPiece())) {
+            return;
+        }
+
         this.saveState("drop");
 
         const piece = this.bag.place();
@@ -382,6 +386,17 @@ export default class Game {
         this.setUpdatedHold(true);
         this.setUpdatedNext(true);
 
+    }
+
+    passFinesse(piece) {
+        // this.keySequence is passed from controls.js
+        let pass = this.mode.passFinesse(piece, this.keySequence);
+        if (pass) {
+            return true;
+        }
+
+        this.save.undoDrop(this);
+        return false;
     }
 
     updateCombo(lineClears) {
@@ -879,6 +894,18 @@ export default class Game {
 
     setShowLookaheadReadyMenu(update) {
         this.mode.showLookaheadReadyMenu = update;
+    }
+
+    showFinesseTip() {
+        return this.mode.showFinesseTip;
+    }
+
+    hideFinesseTip() {
+        return this.mode.hideFinesseTip;
+    }
+
+    getFinesseTip() {
+        return this.mode.finesseTip;
     }
 
     revealDroppedPiece() {

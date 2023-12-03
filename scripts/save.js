@@ -41,7 +41,7 @@ export default class Save {
             }
 
             // keep undoing until they're last move is drop
-        } while (game.lastMove !== "drop" && game.lastMove !== "restart");
+        } while (game.lastMove !== "drop" && game.lastMove !== "restart" && game.lastMove !== "hold");
     }
 
     undoMove(game) {
@@ -183,8 +183,17 @@ export default class Save {
 
         // Maintain current number of lookahead pieces
         let temp = game.mode.numLookaheadPieces;
+        // Maintain finesse tips
+        let showFinesseTip = game.mode.showFinesseTip;
+        let hideFinesseTip = game.mode.hideFinesseTip;
+        let finesseTip = game.mode.finesseTip;
+
         game.mode = state.mode;
+
         game.mode.numLookaheadPieces = temp;
+        game.mode.showFinesseTip = showFinesseTip;
+        game.mode.hideFinesseTip = hideFinesseTip;
+        game.mode.finesseTip = finesseTip;
 
         // Properties
         let currentQueueSize = game.bag.queueSize;

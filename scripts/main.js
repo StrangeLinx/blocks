@@ -23,6 +23,16 @@ function update() {
         game.setShowLookaheadReadyMenu(false);
     }
 
+    if (game.showFinesseTip()) {
+        menu.showFinesseTipComment();
+        game.mode.showFinesseTip = false;
+    }
+
+    if (game.hideFinesseTip()) {
+        menu.hideFinesseTipComment();
+        game.mode.hideFinesseTip = false;
+    }
+
     if (game.getUpdatedPause()) {
         display.pause(game.getTimeElapsed());
         menu.showMain();
