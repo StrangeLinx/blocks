@@ -159,7 +159,12 @@ export default class Save {
         // Add "undo" piece to game queue (if used) then move it to the restore state
         if (game.lastMove === "drop") {
             game.bag.queue.unshift(state.bag.cloneCurrentPiece());
-        } else {
+        }
+        // If first time holding then just copy over bag
+        else if (game.bag.held && state.bag.holdPiece === "") {
+            game.bag.queue = state.bag.queue;
+        }
+        else {
             game.bag.queue[0] = state.bag.getCurrentPiece();
         }
 
