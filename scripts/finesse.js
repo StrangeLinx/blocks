@@ -78,8 +78,8 @@ function tipify(sequences) {
         tip += sequence.join(", ");
     }
     // Improve readability
-    tip = tip.replace("Left, LeftDAS", "DAS Left");
-    tip = tip.replace("Right, RightDAS", "DAS Right");
+    tip = tip.replaceAll("Left, LeftDAS", "DAS Left");
+    tip = tip.replaceAll("Right, RightDAS", "DAS Right");
     return tip;
 }
 
