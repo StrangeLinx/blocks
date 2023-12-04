@@ -24,7 +24,7 @@ export default function(piece, keySequence) {
 function efficientSequence(userSequence, sequences) {
     ignoreInitialDAS(userSequence);
 
-    let numKeysIsLessOrEqual = true;
+    let numKeysIsLess = true;
 
     // Ensure the keys pressed (and held) matches one of the sequences
     for (let sequence of sequences) {
@@ -32,8 +32,8 @@ function efficientSequence(userSequence, sequences) {
             continue;
         }
 
+        numKeysIsLess = false;
         if (userSequence.length > sequence.length) { // More is bad
-            numKeysIsLessOrEqual = false;
             continue;
         }
 
@@ -51,7 +51,7 @@ function efficientSequence(userSequence, sequences) {
     }
 
     // If amount of keys pressed is less than all the sequences, then pass
-    if (numKeysIsLessOrEqual) {
+    if (numKeysIsLess) {
         return true;
     }
 
@@ -248,7 +248,7 @@ const finesseSZ = {
         6: [["Right", "Rotate CW"]],              // fail
         7: [["Right", "Right", "Rotate CW"], ["Right", "RightDAS", "Left", "Rotate CCW"]], // 2 ok
         8: [["Right", "RightDAS", "Rotate CCW"]],
-        9: [["Right", "RightDAS", "Rotate CW"]],
+        9: [["Right", "RightDAS", "Rotate CW"], ["Rotate CCW", "Right", "RightDAS"]], // 2 ok
     }
 };
 
