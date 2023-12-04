@@ -24,7 +24,7 @@ export default function(piece, keySequence) {
 function efficientSequence(userSequence, sequences) {
     ignoreInitialDAS(userSequence);
 
-    let numKeysIsLess = true;
+    let numKeysIsLessOrEqual = true;
 
     // Ensure the keys pressed (and held) matches one of the sequences
     for (let sequence of sequences) {
@@ -32,8 +32,8 @@ function efficientSequence(userSequence, sequences) {
             continue;
         }
 
-        numKeysIsLess = false;
-        if (userSequence.length > sequence.length) { // Less is bad
+        if (userSequence.length > sequence.length) { // More is bad
+            numKeysIsLessOrEqual = false;
             continue;
         }
 
@@ -51,7 +51,7 @@ function efficientSequence(userSequence, sequences) {
     }
 
     // If amount of keys pressed is less than all the sequences, then pass
-    if (numKeysIsLess) {
+    if (numKeysIsLessOrEqual) {
         return true;
     }
 
