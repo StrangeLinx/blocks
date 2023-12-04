@@ -4,12 +4,12 @@ export default class Controls {
     constructor(game) {
 
         this.game = game;
-        this.keySequence = [];
 
         this.createIntervalGlobals();
         this.createMoves();
         this.loadUserKeybindPreferences();
         this.loadUserHandlingPreferences();
+        this.newKeySequence();
 
     }
 
@@ -195,6 +195,13 @@ export default class Controls {
         return typeof (Storage) !== "undefined";
     }
 
+    newKeySequence() {
+        this.keySequence = {
+            keyPresses: 0,
+            sequence: []
+        };
+    }
+
     press(key) {
 
         if (!(key in this.pressed)) {
@@ -231,22 +238,17 @@ export default class Controls {
     }
 
     addKeySequence(action) {
-        // Reset sequence on a gameflow action
-        if (action === "Restart" || action === "Pause") {
-            this.keySequence = [];
-            return;
+        // Reset sequence on a gameflow action or when "Holding" piece
+        if (action === "Restart" || action === "Pause" || action === "Hold") {
+            this.newKeySequence();
         }
-
-        if (action === "Hard Drop") {
+        else if (action === "Hard Drop") {
             this.game.keySequence = this.keySequence;
-            this.keySequence = [];
-        }
-        else if (action === "Hold") {
-            this.game.keySequence = [];
-            this.keySequence = [];
+            this.newKeySequence();
         }
         else {
-            this.keySequence.push(action);
+            this.keySequence.keyPresses++;
+            this.keySequence.sequence.push(action);
         }
     }
 
@@ -282,7 +284,7 @@ export default class Controls {
     left(move) {
         clearTimeout(this.rightInterval);
         clearInterval(this.rightInterval);
-        this.keySequence.push("Left");
+        this.addKeySequence("Left");
         this.game.update(move);
 
         // If instant move to wall
@@ -293,7 +295,9 @@ export default class Controls {
         }
 
         this.leftInterval = setTimeout(() => {
-            this.keySequence.push("LeftDAS");
+            // Not addKeySequence("LeftDAS") since not pressing additional keys
+            // LeftDAS occurs when player holds key
+            this.keySequence.sequence.push("LeftDAS");
             this.game.update(move);
             this.repeatLeft(move, ARR);
         }, this.DAS);
@@ -302,8 +306,8 @@ export default class Controls {
 
     repeatLeft(move, ARR) {
         this.leftInterval = setInterval(() => {
-            if (!this.keySequence.includes("LeftDAS")) {
-                this.keySequence.push("LeftDAS");
+            if (!this.keySequence.sequence.includes("LeftDAS")) {
+                this.keySequence.sequence.push("LeftDAS");
             }
             this.game.update(move);
         }, ARR);
@@ -312,7 +316,7 @@ export default class Controls {
     right(move) {
         clearTimeout(this.leftInterval);
         clearInterval(this.leftInterval);
-        this.keySequence.push("Right");
+        this.addKeySequence("Right");
         this.game.update(move);
 
         // If instant move to wall
@@ -323,7 +327,7 @@ export default class Controls {
         }
 
         this.rightInterval = setTimeout(() => {
-            this.keySequence.push("RightDAS");
+            this.keySequence.sequence.push("RightDAS");
             this.game.update(move);
             this.repeatRight(move, ARR);
         }, this.DAS);
@@ -331,8 +335,8 @@ export default class Controls {
 
     repeatRight(move, ARR) {
         this.rightInterval = setInterval(() => {
-            if (!this.keySequence.includes("RightDAS")) {
-                this.keySequence.push("RightDAS");
+            if (!this.keySequence.sequence.includes("RightDAS")) {
+                this.keySequence.sequence.push("RightDAS");
             }
             this.game.update(move);
         }, ARR);
@@ -345,7 +349,7 @@ export default class Controls {
             repeatRate = 8;
         }
 
-        this.keySequence.push("Soft Drop");
+        this.addKeySequence("Soft Drop");
         this.game.update(move);
         this.softDropInterval = setInterval(() => {
             this.game.update(move);
@@ -355,7 +359,7 @@ export default class Controls {
     undo(move) {
         clearInterval(this.redoInterval);
         let repeatRate = 150;
-        this.keySequence = [];
+        this.newKeySequence();
         this.game.update(move);
         this.undoInterval = setInterval(() => {
             this.game.update(move);
@@ -365,7 +369,7 @@ export default class Controls {
     redo(move) {
         clearInterval(this.undoInterval);
         let repeatRate = 150;
-        this.keySequence = [];
+        this.newKeySequence();
         this.game.update(move);
         this.redoInterval = setInterval(() => {
             this.game.update(move);
