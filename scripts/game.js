@@ -696,7 +696,7 @@ export default class Game {
         }
 
         this.restartOnModeChange = false;
-        this.saveState("load");
+        this.saveState("restart");
 
         this.grid.setGrid(grid);
         this.updateHold(hold);
