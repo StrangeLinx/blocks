@@ -6,7 +6,7 @@ export default function(piece, keySequence) {
     }
 
     // Automatic pass with Soft Drop
-    if (keySequence.sequence.includes("Soft Drop")) {
+    if (keySequence.sequence.includes("Soft Drop") || keySequence.sequence.includes("Soft Drop Repeat")) {
         return [true, ""];
     }
 

@@ -352,6 +352,9 @@ export default class Controls {
         this.addKeySequence("Soft Drop");
         this.game.update(move);
         this.softDropInterval = setInterval(() => {
+            if (!this.keySequence.sequence.includes("Soft Drop Repeat")) {
+                this.keySequence.sequence.push("Soft Drop Repeat");
+            }
             this.game.update(move);
         }, repeatRate);
     }
