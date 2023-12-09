@@ -25,10 +25,10 @@ body {
     /* Position in the center vertically */
     position: absolute;
     top: 50%;
-    transform: translate(0, -60%);
+    transform: translate(0, -55%);
 
     display: grid;
-    grid-template-rows: auto auto auto auto 3rem;
+    grid-template-rows: auto auto auto auto auto 3rem;
     grid-template-columns: auto auto auto;
     grid-template-areas:
         "overflow-nothing1 overflow overflow-nothing2"
@@ -256,6 +256,13 @@ body {
 .menu-option {
     width: 13rem;
     height: 2.5rem;
+}
+
+.game-menu-button,
+.game-settings-button {
+    margin: 5px;
+    width: 9rem;
+    height: 2.1rem;
 }
 
 input {
