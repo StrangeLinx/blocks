@@ -460,11 +460,6 @@ export default class Game {
     rotate(r) {
         const rotatedPiece = this.bag.cloneCurrentPiece();
 
-        // O piece only has 1 rotation
-        if (rotatedPiece.type === "o") {
-            return;
-        }
-
         // Check if current rotation is valid
         rotatedPiece.rotate(r);
         if (this.grid.valid(rotatedPiece)) {
