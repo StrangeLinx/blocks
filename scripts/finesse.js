@@ -1,5 +1,5 @@
 
-export default function(piece, keySequence, kicked, require180) {
+export default function(piece, keySequence, require180) {
     // If only hard drop finesse passes
     if (keySequence.keyPresses === 0) {
         return [true, ""];
@@ -7,11 +7,6 @@ export default function(piece, keySequence, kicked, require180) {
 
     // Automatic pass with Soft Drop
     if (keySequence.sequence.includes("Soft Drop") || keySequence.sequence.includes("Soft Drop Repeat")) {
-        return [true, ""];
-    }
-
-    // If piece was kicked (and no soft drop), it means player is at top of the board, automatic pass
-    if (kicked) {
         return [true, ""];
     }
 
