@@ -396,7 +396,7 @@ export default class Game {
 
     passFinesse(piece) {
         // this.keySequence is passed from controls.js
-        let pass = this.mode.passFinesse(piece, this.keySequence);
+        let pass = this.mode.passFinesse(piece, this.keySequence, this.kicked);
         if (pass) {
             return true;
         }

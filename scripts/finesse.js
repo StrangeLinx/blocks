@@ -1,5 +1,5 @@
 
-export default function(piece, keySequence, require180) {
+export default function(piece, keySequence, kicked, require180) {
     // If only hard drop finesse passes
     if (keySequence.keyPresses === 0) {
         return [true, ""];
@@ -10,9 +10,19 @@ export default function(piece, keySequence, require180) {
         return [true, ""];
     }
 
+    // If piece was kicked (and no soft drop), it means player is at top of the board, automatic pass
+    if (kicked) {
+        return [true, ""];
+    }
+
     // Retrieve the preferred sequences of key press (and hold)
     let sequences = finesseLibrary[require180][piece.type][piece.rot][piece.x];
-    console.log(require180);
+
+    // Failed a trivial case
+    if (!passTrivialCases(keySequence)) {
+        return [false, tipify(sequences)];
+    }
+
     let pass = efficientSequence(keySequence, sequences);
 
     if (pass) {
@@ -20,6 +30,47 @@ export default function(piece, keySequence, require180) {
     }
 
     return [false, tipify(sequences)];
+}
+
+function passTrivialCases(keySequence) {
+    // Assume no soft drop and no piece kicks
+
+    // Moving left then right (or vice versa)
+    let redundantLeftRight = false;
+    for (let i = 0; i < keySequence.sequence.length - 1; i++) {
+        let prevKey = keySequence.sequence[i];
+        let currentKey = keySequence.sequence[i + 1];
+        if ((prevKey === "Left" && currentKey === "Right") ||
+            (prevKey === "Right" && currentKey === "Left")) {
+            redundantLeftRight = true;
+        }
+    }
+
+    if (redundantLeftRight) {
+        return false;
+    }
+
+    // Rotating clockwise and counter clockwise
+    let rotateCW = keySequence.sequence.includes("Rotate CW");
+    let rotateCCW = keySequence.sequence.includes("Rotate CCW");
+    if (rotateCW && rotateCCW) {
+        return false;
+    }
+
+    // Rotating 180 and CW or CCW
+    let rotate180 = keySequence.sequence.includes("Rotate 180");
+    if (rotate180 && (rotateCW || rotateCCW)) {
+        return false;
+    }
+
+    // Triple rotates
+    let numCWRotates = keySequence.sequence.filter(key => key === "Rotate CW").length;
+    let numCCWRotates = keySequence.sequence.filter(key => key === "Rotate CCW").length;
+    if (numCWRotates > 2 || numCCWRotates > 2) {
+        return false;
+    }
+
+    return true;
 }
 
 function efficientSequence(userSequence, sequences) {

@@ -120,13 +120,13 @@ export default class Mode {
         this.numLookaheadPieces = numPieces;
     }
 
-    passFinesse(piece, keySequence) {
+    passFinesse(piece, keySequence, kicked) {
         // Only fail in finesse mode
         if (this.type !== "finesse") {
             return true;
         }
 
-        let [pass, tip] = checkFinesse(piece, keySequence, this.finesseRequire180);
+        let [pass, tip] = checkFinesse(piece, keySequence, kicked, this.finesseRequire180);
 
         if (pass) {
             return true;
