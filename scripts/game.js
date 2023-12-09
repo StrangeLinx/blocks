@@ -375,6 +375,10 @@ export default class Game {
         this.updateB2B(lineClears);
         this.updateAttack(lineClears);
 
+        // Update t spin status after hard drop
+        this.miniTSpin = false;
+        this.tSpin = false;
+
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
 
