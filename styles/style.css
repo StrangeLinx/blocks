@@ -289,6 +289,16 @@ label {
     cursor: pointer;
 }
 
+.finesse-button {
+    flex-direction: row;
+    gap: 1ch;
+}
+
+.finesse-require-180-button {
+    padding: 0.1rem;
+    font-size: 0.9rem;
+    border: 2px solid #666666;
+}
 
 #edit-queue-menu .edit-queue-option {
     padding: 0 .5rem;

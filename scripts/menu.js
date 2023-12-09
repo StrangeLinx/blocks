@@ -45,6 +45,7 @@ export default class Menu {
         this.b2bButton = document.querySelector(".b2b-button");
         this.lookButton = document.querySelector(".lookahead-button");
         this.finesseButton = document.querySelector(".finesse-button");
+        this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.sprintButton = document.querySelector(".sprint-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
@@ -111,11 +112,15 @@ export default class Menu {
         this.uploadButton.addEventListener("change", ev => this.loadGameFromImage(ev));
 
         // Change mode menu
-        this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
-        this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
-        this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
-        this.finesseButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
-        this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.target));
+        this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+        this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+        this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+        this.finesseButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+        this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+        this.finesseRequire180Button.addEventListener("click", ev => {
+            let status = ev.target.classList.toggle("user-choice");
+            this.game.mode.finesseRequire180 = status;
+        });
         this.changeModeDoneButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
             this.activeMenu = "main";
@@ -631,12 +636,15 @@ export default class Menu {
     }
 
     updateGameModeFromMenu(buttonPressed) {
-        // Reset statuses
+        // Remove "active" status when selecting another mode
         this.freeButton.classList.remove("user-choice");
         this.b2bButton.classList.remove("user-choice");
         this.lookButton.classList.remove("user-choice");
         this.finesseButton.classList.remove("user-choice");
         this.sprintButton.classList.remove("user-choice");
+        if (buttonPressed !== this.finesseButton) {
+            this.finesseRequire180Button.classList.remove("user-choice");
+        }
 
         buttonPressed.classList.add("user-choice");
 

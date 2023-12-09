@@ -5,6 +5,7 @@ export default class Mode {
     constructor(type = "free") {
         this.new(type);
         this.numLookaheadPieces = 3;
+        this.finesseRequire180 = false;
     }
 
     new(type) {
@@ -125,7 +126,7 @@ export default class Mode {
             return true;
         }
 
-        let [pass, tip] = checkFinesse(piece, keySequence);
+        let [pass, tip] = checkFinesse(piece, keySequence, this.finesseRequire180);
 
         if (pass) {
             return true;

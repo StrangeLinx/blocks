@@ -1,5 +1,5 @@
 
-export default function(piece, keySequence) {
+export default function(piece, keySequence, require180) {
     // If only hard drop finesse passes
     if (keySequence.keyPresses === 0) {
         return [true, ""];
@@ -11,7 +11,8 @@ export default function(piece, keySequence) {
     }
 
     // Retrieve the preferred sequences of key press (and hold)
-    let sequences = finesseLibrary[piece.type][piece.rot][piece.x];
+    let sequences = finesseLibrary[require180][piece.type][piece.rot][piece.x];
+    console.log(require180);
     let pass = efficientSequence(keySequence, sequences);
 
     if (pass) {
@@ -40,6 +41,12 @@ function tipify(sequences) {
     return tip;
 }
 
+
+// 
+// Finesse library
+// 
+
+
 const finesseO = {
     0: {
         0: { keyPresses: 1, sequences: [["Left", "LeftDAS"]] },
@@ -55,6 +62,7 @@ const finesseO = {
 };
 
 // 
+// Never rotate O
 // ALL the below fail finesse for O
 // 
 finesseO[1] = finesseO[0];
@@ -130,14 +138,14 @@ const finesseLJT = {
         8: { keyPresses: 2, sequences: [["Right", "RightDAS", "Rotate CW"]] },
     },
     2: {
-        1: { keyPresses: 2, sequences: [["Left", "LeftDAS", "Rotate 180"]] },
-        2: { keyPresses: 3, sequences: [["Left", "Left", "Rotate 180"], ["Left", "LeftDAS", "Right", "Rotate 180"]] },
-        3: { keyPresses: 2, sequences: [["Left", "Rotate 180"]] },
-        4: { keyPresses: 1, sequences: [["Rotate 180"]] },
-        5: { keyPresses: 2, sequences: [["Right", "Rotate 180"]] },
-        6: { keyPresses: 3, sequences: [["Right", "Right", "Rotate 180"]] },
-        7: { keyPresses: 3, sequences: [["Right", "RightDAS", "Left", "Rotate 180"]] },
-        8: { keyPresses: 2, sequences: [["Right", "RightDAS", "Rotate 180"]] },
+        1: { keyPresses: 3, sequences: [["Left", "LeftDAS", "Rotate CW", "Rotate CW"]] },
+        2: { keyPresses: 4, sequences: [["Left", "Left", "Rotate CW", "Rotate CW"], ["Left", "LeftDAS", "Right", "Rotate CW", "Rotate CW"]] },
+        3: { keyPresses: 3, sequences: [["Left", "Rotate CW", "Rotate CW"]] },
+        4: { keyPresses: 2, sequences: [["Rotate CW", "Rotate CW"]] },
+        5: { keyPresses: 3, sequences: [["Right", "Rotate CW", "Rotate CW"]] },
+        6: { keyPresses: 4, sequences: [["Right", "Right", "Rotate CW", "Rotate CW"]] },
+        7: { keyPresses: 4, sequences: [["Right", "RightDAS", "Left", "Rotate CW", "Rotate CW"]] },
+        8: { keyPresses: 3, sequences: [["Right", "RightDAS", "Rotate CW", "Rotate CW"]] },
     },
     3: {
         1: { keyPresses: 2, sequences: [["Left", "LeftDAS", "Rotate CCW"]] },
@@ -179,13 +187,7 @@ const finesseSZ = {
     }
 };
 
-//
-// finesseLibrary[pieceType][rotation][x] = { key presses, array of key press sequences }
-// pieceType is the current piece type
-// rotation is the current piece rotation
-// x represents the column the current piece was placed
-// 
-const finesseLibrary = {
+const finesseLibraryAllowDouble90 = {
     o: finesseO,
     i: finesseI,
     l: finesseLJT,
@@ -194,3 +196,51 @@ const finesseLibrary = {
     t: finesseLJT,
     z: finesseSZ
 };
+
+
+//
+// Finesse library strict 180 spins
+// Only changes are where Rotate CW are seen twice
+// Only applies to pieces LJT
+// 
+
+const finesse180LJT = {
+    0: finesseLJT[0],
+    1: finesseLJT[1],
+    2: {
+        1: { keyPresses: 2, sequences: [["Left", "LeftDAS", "Rotate 180"]] },
+        2: { keyPresses: 3, sequences: [["Left", "Left", "Rotate 180"], ["Left", "LeftDAS", "Right", "Rotate 180"]] },
+        3: { keyPresses: 2, sequences: [["Left", "Rotate 180"]] },
+        4: { keyPresses: 1, sequences: [["Rotate 180"]] },
+        5: { keyPresses: 2, sequences: [["Right", "Rotate 180"]] },
+        6: { keyPresses: 3, sequences: [["Right", "Right", "Rotate 180"]] },
+        7: { keyPresses: 3, sequences: [["Right", "RightDAS", "Left", "Rotate 180"]] },
+        8: { keyPresses: 2, sequences: [["Right", "RightDAS", "Rotate 180"]] },
+    },
+    3: finesseLJT[3]
+};
+
+
+const finesseStrict180Library = {
+    o: finesseO,
+    i: finesseI,
+    l: finesse180LJT,
+    j: finesse180LJT,
+    s: finesseSZ,
+    t: finesse180LJT,
+    z: finesseSZ,
+};
+
+//
+// finesseLibrary[require180][pieceType][rotation][x] = { key presses, array of key press sequences }
+// require180 defines if key inputs should require pressing 180 key (instead of double 90 rotations)
+// pieceType is the current piece type
+// rotation is the current piece rotation
+// x represents the column the current piece was placed
+// 
+
+const finesseLibrary = {
+    true: finesseStrict180Library,
+    false: finesseLibraryAllowDouble90
+}
+
