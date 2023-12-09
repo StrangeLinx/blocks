@@ -40,6 +40,7 @@ export default class Game {
         this.linesCleared = 0;
         this.tSpin = false;
         this.miniTSpin = false;
+        this.kicked = false;
         this.b2b = -1;
         this.maxB2B = 0;
         this.combo = -1;
@@ -378,6 +379,7 @@ export default class Game {
         // Update t spin status after hard drop
         this.miniTSpin = false;
         this.tSpin = false;
+        this.kicked = false;
 
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
@@ -493,6 +495,7 @@ export default class Game {
                 this.bag.setCurrentPiece(kickedPiece);
                 this.updatedGrid = true;
                 this.checkTSpin(kickedPiece, newRotation, currentRotation, i + 1);
+                this.kicked = true;
                 return;
             }
 
@@ -602,6 +605,7 @@ export default class Game {
             }
             this.tSpin = false;
             this.miniTSpin = false;
+            this.kicked = false;
         }
 
         // If a player is dangerously high on the board,

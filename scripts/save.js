@@ -103,6 +103,7 @@ export default class Save {
         clone.linesCleared = game.linesCleared;
         clone.tSpin = game.tSpin;
         clone.miniTSpin = game.miniTSpin;
+        clone.kicked = game.kicked;
         clone.b2b = game.b2b;
         clone.maxB2B = game.maxB2B;
         clone.combo = game.combo;
@@ -205,6 +206,7 @@ export default class Save {
         game.linesCleared = state.linesCleared;
         game.tSpin = state.tSpin;
         game.miniTSpin = state.miniTSpin;
+        game.kicked = state.kicked;
         game.b2b = state.b2b;
         game.maxB2B = state.maxB2B;
         game.combo = state.combo;
