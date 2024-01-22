@@ -5,6 +5,7 @@ export default class Mode {
     constructor(type = "free") {
         this.new(type);
         this.numLookaheadPieces = 3;
+        this.lookaheadShowQueue = false;
         this.finesseRequire180 = false;
     }
 

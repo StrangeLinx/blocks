@@ -776,6 +776,10 @@ export default class Game {
         return this.mode.blind;
     }
 
+    blindShowQueue() {
+        return this.mode.lookaheadShowQueue;
+    }
+
     getDropPreview() {
         const piece = this.bag.cloneCurrentPiece();
         this.calculateDrop(piece);

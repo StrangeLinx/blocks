@@ -50,6 +50,11 @@ export default class Menu {
         this.modePreferenceButton = document.querySelector(".mode-preference-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
+        // Mode Preference Menu
+        this.lookaheadShowQueueButton = document.querySelector(".lookahead-show-queue");
+        this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
+        this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
+
         // Settings menu
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
@@ -77,10 +82,6 @@ export default class Menu {
         this.restoreDropButton = document.querySelector(".restore-on-drop");
         this.restoreMoveButton = document.querySelector(".restore-on-move");
         this.restoreDoneButton = document.querySelector(".restore-done");
-
-        // Mode Preference Menu
-        this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
-        this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
 
         // In-game edit queue menu
         this.queueSizeInput = document.querySelector("#queue-size");
@@ -135,6 +136,14 @@ export default class Menu {
 
         // Mode Specific Preferences
         this.loadUserModePreferences();
+        this.lookaheadShowQueueButton.addEventListener("click", ev => {
+            let status = ev.target.classList.toggle("user-choice");
+            this.game.mode.lookaheadShowQueue = status;
+
+            if (this.controls.localStorageSupport()) {
+                localStorage.setItem("showQueue", status);
+            }
+        });
         this.finesseRequire180Button.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.game.mode.finesseRequire180 = status;
@@ -408,13 +417,14 @@ export default class Menu {
         // Retrieve user preferences
         let lookaheadShowQueue, finesseStrict180;
         if (this.controls.localStorageSupport()) {
-            // lookaheadShowQueue = (localStorage.getItem("showQueue") === "true");
+            lookaheadShowQueue = (localStorage.getItem("showQueue") === "true");
             finesseStrict180 = (localStorage.getItem("require180") === "true");
         }
 
-        // if (lookaheadShowQueue) {
-        //     // do something
-        // }
+        if (lookaheadShowQueue) {
+            this.game.mode.lookaheadShowQueue = lookaheadShowQueue;
+            this.lookaheadShowQueueButton.classList.add("user-choice");
+        }
 
         if (finesseStrict180) {
             this.game.mode.finesseRequire180 = finesseStrict180;

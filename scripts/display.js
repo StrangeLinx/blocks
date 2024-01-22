@@ -53,6 +53,7 @@ export default class Display {
         this.nextRows = 16;
         this.nextCols = 6;
         this.blind = false;
+        this.blindShowQueue = false;
     }
 
     retrieveGameElements() {
@@ -124,8 +125,9 @@ export default class Display {
         this.next.style.height = `${height}rem`;
     }
 
-    setBlind(flag) {
+    setBlind(flag, showQueue) {
         this.blind = flag;
+        this.blindShowQueue = showQueue;
     }
 
     createGridCells() {
@@ -313,10 +315,11 @@ export default class Display {
      * And gives it color according to piece type
      * @param {HTMLDivElement} square 
      * @param {String} type 
+     * @param {Boolean} expose determines if piece should be shown (defined by user preference)
      */
-    updateSquare(square, type) {
+    updateSquare(square, type, expose = false) {
         square.classList.add(type);
-        if (this.blind) {
+        if (this.blind && !expose) {
             square.classList.add("blind");
         } else {
             square.classList.remove("blind");
@@ -377,7 +380,7 @@ export default class Display {
             for (let c = 0; c < this.holdCols; c++) {
                 let currentSquare = this.holdCells[r][c];
                 this.removeColor(currentSquare);
-                this.updateSquare(currentSquare, "empty");
+                this.updateSquare(currentSquare, "empty", this.blindShowQueue);
             }
         }
 
@@ -402,7 +405,7 @@ export default class Display {
             for (let c = 0; c < this.nextCols; c++) {
                 let currentSquare = this.nextCells[r][c];
                 this.removeColor(currentSquare);
-                this.updateSquare(currentSquare, "empty");
+                this.updateSquare(currentSquare, "empty", this.blindShowQueue);
             }
         }
 

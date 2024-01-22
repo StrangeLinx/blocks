@@ -54,7 +54,7 @@ function update() {
 }
 
 function draw() {
-    display.setBlind(game.blind());
+    display.setBlind(game.blind(), game.blindShowQueue());
 
     if (game.getUpdatedGrid()) {
         display.drawGrid(game.getGrid(), game.getCurrentPiece(), game.getDropPreview());
