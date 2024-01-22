@@ -289,17 +289,6 @@ label {
     cursor: pointer;
 }
 
-.finesse-button {
-    flex-direction: row;
-    gap: 1ch;
-}
-
-.finesse-require-180-button {
-    padding: 0.1rem;
-    font-size: 0.9rem;
-    border: 2px solid #666666;
-}
-
 #edit-queue-menu .edit-queue-option {
     padding: 0 .5rem;
     width: 12rem;
@@ -421,16 +410,19 @@ label {
 }
 
 #change-mode-menu .user-choice,
+#mode-preference-menu .user-choice,
 .restore-option.user-choice {
     border: 2px solid #7ACD44;
 }
 
 #change-mode-menu .user-choice:hover,
+#mode-preference-menu .user-choice:hover,
 .restore-option.user-choice:hover {
     border: 2px solid #c8ffc5;
 }
 
 #change-mode-menu .user-choice:active,
+#mode-preference-menu .user-choice:active,
 .restore-option.user-choice:active {
     border: 2px solid black;
     border: 2px solid rgba(0, 0, 0, 0);

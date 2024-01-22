@@ -46,7 +46,6 @@ export default class Menu {
         this.b2bButton = document.querySelector(".b2b-button");
         this.lookButton = document.querySelector(".lookahead-button");
         this.finesseButton = document.querySelector(".finesse-button");
-        this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.sprintButton = document.querySelector(".sprint-button");
         this.modePreferenceButton = document.querySelector(".mode-preference-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
@@ -80,6 +79,7 @@ export default class Menu {
         this.restoreDoneButton = document.querySelector(".restore-done");
 
         // Mode Preference Menu
+        this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
 
         // In-game edit queue menu
@@ -122,10 +122,6 @@ export default class Menu {
         this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.finesseButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
-        this.finesseRequire180Button.addEventListener("click", ev => {
-            let status = ev.target.classList.toggle("user-choice");
-            this.game.mode.finesseRequire180 = status;
-        });
         this.modePreferenceButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
             this.activeMenu = "modePreference";
@@ -135,6 +131,22 @@ export default class Menu {
             this.hide(this.changeModeMenu);
             this.activeMenu = "main";
             this.show(this.mainMenu);
+        });
+
+        // Mode Specific Preferences
+        this.loadUserModePreferences();
+        this.finesseRequire180Button.addEventListener("click", ev => {
+            let status = ev.target.classList.toggle("user-choice");
+            this.game.mode.finesseRequire180 = status;
+
+            if (this.controls.localStorageSupport()) {
+                localStorage.setItem("require180", status);
+            }
+        });
+        this.modePreferenceDoneButton.addEventListener("click", () => {
+            this.hide(this.modePreferenceMenu);
+            this.activeMenu = "changeMode";
+            this.show(this.changeModeMenu);
         });
 
         // Settings menu
@@ -257,13 +269,6 @@ export default class Menu {
             this.hide(this.restoreMenu);
             this.activeMenu = "settings";
             this.show(this.settingsMenu);
-        });
-
-        // Mode Specific Preferences
-        this.modePreferenceDoneButton.addEventListener("click", () => {
-            this.hide(this.modePreferenceMenu);
-            this.activeMenu = "changeMode";
-            this.show(this.changeModeMenu);
         });
 
         // Edit Queue
@@ -397,6 +402,24 @@ export default class Menu {
             ev.target.classList.remove("invalid");
         }
 
+    }
+
+    loadUserModePreferences() {
+        // Retrieve user preferences
+        let lookaheadShowQueue, finesseStrict180;
+        if (this.controls.localStorageSupport()) {
+            // lookaheadShowQueue = (localStorage.getItem("showQueue") === "true");
+            finesseStrict180 = (localStorage.getItem("require180") === "true");
+        }
+
+        // if (lookaheadShowQueue) {
+        //     // do something
+        // }
+
+        if (finesseStrict180) {
+            this.game.mode.finesseRequire180 = finesseStrict180;
+            this.finesseRequire180Button.classList.add("user-choice");
+        }
     }
 
     loadUserRestorePreference() {
@@ -665,9 +688,6 @@ export default class Menu {
         this.lookButton.classList.remove("user-choice");
         this.finesseButton.classList.remove("user-choice");
         this.sprintButton.classList.remove("user-choice");
-        if (buttonPressed !== this.finesseButton) {
-            this.finesseRequire180Button.classList.remove("user-choice");
-        }
 
         buttonPressed.classList.add("user-choice");
 
