@@ -25,6 +25,7 @@ export default class Menu {
         // All menus
         this.mainMenu = document.querySelector("#main-menu");
         this.changeModeMenu = document.querySelector("#change-mode-menu");
+        this.modePreferenceMenu = document.querySelector("#mode-preference-menu");
         this.settingsMenu = document.querySelector("#settings-menu");
         this.controlsMenu = document.querySelector("#controls-menu");
         this.handlingMenu = document.querySelector("#handling-menu");
@@ -47,6 +48,7 @@ export default class Menu {
         this.finesseButton = document.querySelector(".finesse-button");
         this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.sprintButton = document.querySelector(".sprint-button");
+        this.modePreferenceButton = document.querySelector(".mode-preference-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
         // Settings menu
@@ -76,6 +78,9 @@ export default class Menu {
         this.restoreDropButton = document.querySelector(".restore-on-drop");
         this.restoreMoveButton = document.querySelector(".restore-on-move");
         this.restoreDoneButton = document.querySelector(".restore-done");
+
+        // Mode Preference Menu
+        this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
 
         // In-game edit queue menu
         this.queueSizeInput = document.querySelector("#queue-size");
@@ -120,6 +125,11 @@ export default class Menu {
         this.finesseRequire180Button.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.game.mode.finesseRequire180 = status;
+        });
+        this.modePreferenceButton.addEventListener("click", () => {
+            this.hide(this.changeModeMenu);
+            this.activeMenu = "modePreference";
+            this.show(this.modePreferenceMenu);
         });
         this.changeModeDoneButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
@@ -247,6 +257,13 @@ export default class Menu {
             this.hide(this.restoreMenu);
             this.activeMenu = "settings";
             this.show(this.settingsMenu);
+        });
+
+        // Mode Specific Preferences
+        this.modePreferenceDoneButton.addEventListener("click", () => {
+            this.hide(this.modePreferenceMenu);
+            this.activeMenu = "changeMode";
+            this.show(this.changeModeMenu);
         });
 
         // Edit Queue
@@ -615,6 +632,12 @@ export default class Menu {
             this.hide(this.restoreMenu);
             this.activeMenu = "settings";
             this.show(this.settingsMenu);
+        }
+
+        else if (this.activeMenu === "modePreference") {
+            this.hide(this.modePreferenceMenu);
+            this.activeMenu = "changeMode";
+            this.show(this.changeModeMenu);
         }
 
         else if (this.activeMenu === "results") {
