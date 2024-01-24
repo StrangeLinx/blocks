@@ -51,6 +51,7 @@ export default class Menu {
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
         // Mode Preference Menu
+        this.autocolorButton = document.querySelector(".autocolor");
         this.lookaheadShowQueueButton = document.querySelector(".lookahead-show-queue");
         this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
@@ -136,6 +137,14 @@ export default class Menu {
 
         // Mode Specific Preferences
         this.loadUserModePreferences();
+        this.autocolorButton.addEventListener("click", ev => {
+            let status = ev.target.classList.toggle("user-choice");
+            this.display.autocolorEnabled = status;
+
+            if (this.controls.localStorageSupport()) {
+                localStorage.setItem("autocolor", status);
+            }
+        });
         this.lookaheadShowQueueButton.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.game.mode.lookaheadShowQueue = status;
@@ -414,11 +423,31 @@ export default class Menu {
     }
 
     loadUserModePreferences() {
-        // Retrieve user preferences
+
+        // autocolor is initially on
+        let autocolorPiece = true;
+        // show-queue and strict 180 are initially off
         let lookaheadShowQueue, finesseStrict180;
+
+        // Retrieve user preferences
         if (this.controls.localStorageSupport()) {
+
+            // If autocolor preference previously NOT defined then enabled by default
+            let temp = localStorage.getItem("autocolor");
+            if (temp) {
+                autocolorPiece = (temp === "true");
+            }
+
+            // If following preferences previously NOT defined then disabled by default
             lookaheadShowQueue = (localStorage.getItem("showQueue") === "true");
             finesseStrict180 = (localStorage.getItem("require180") === "true");
+        }
+
+        this.display.autocolorEnabled = autocolorPiece;
+        if (autocolorPiece) {
+            this.autocolorButton.classList.add("user-choice");
+        } else {
+            this.autocolorButton.classList.remove("user-choice");
         }
 
         if (lookaheadShowQueue) {

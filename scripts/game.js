@@ -689,6 +689,7 @@ export default class Game {
     }
 
     fillSquare(type, x, y) {
+        // Caller determines if a filler square can be overwritten
         this.grid.fillSquare(type, x, y);
         this.updatedGrid = true;
     }
@@ -722,6 +723,22 @@ export default class Game {
         /**if (this.piecesPlaced > 0) {
             this.save.save(this);
         }*/
+    }
+
+    calculatePieceType(squares) {
+        const template = this.grid.createSubgrid(squares);
+        const pieceType = this.bag.calculatePieceType(template);
+
+        // no piece identified
+        if (pieceType === "g") {
+            return false;
+        }
+
+        // piece identified
+        for (let square of squares) {
+            square.pieceType = pieceType;
+        }
+        return true;
     }
 
     getUpdatedGameOver() {

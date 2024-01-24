@@ -54,6 +54,7 @@ export default class Display {
         this.nextCols = 6;
         this.blind = false;
         this.blindShowQueue = false;
+        this.autocolorEnabled = true;
     }
 
     retrieveGameElements() {
@@ -246,6 +247,7 @@ export default class Display {
         if (this.empty(cell)) {
             this.triggerFill = true;
             this.triggerClear = false;
+            this.activatedCells = [];
         } else {
             this.triggerFill = false;
             this.triggerClear = true;
@@ -279,6 +281,9 @@ export default class Display {
                 x: x,
                 y: y,
             };
+            if (this.autocolorEnabled) {
+                this.activatedCells.push(cell);
+            }
         } else if (this.triggerClear) {
             cell = {
                 type: "fillSquare",
@@ -288,7 +293,40 @@ export default class Display {
             };
         }
 
+        if (this.autocolor()) {
+            return;
+        }
+
         this.game.update(cell);
+
+    }
+
+    autocolor() {
+        // Autocolor checks every 4 "drawn" cells.
+        // If no piece is identified from these 4 cells then rest drawn cells are grey
+
+
+        if (!this.autocolorEnabled) {
+            return false;
+        }
+
+        if (this.activatedCells.length !== 4) {
+            return false;
+        }
+
+        // Cells can represent a piece. If so, determine which piece it is
+        if (!this.game.calculatePieceType(this.activatedCells)) {
+            // No piece identified
+            return false;
+        }
+
+        // Piece identified
+        for (let coloredCell of this.activatedCells) {
+            this.game.update(coloredCell);
+        }
+        this.activatedCells = [];
+
+        return true;
     }
 
     bindHoldNextEvents() {

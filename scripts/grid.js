@@ -123,10 +123,6 @@ export default class Grid {
     }
 
     fillSquare(type, x, y) {
-        // Prevent filling a filled square
-        if (type !== "" && !this.free(x, y)) {
-            return;
-        }
         this.placeSquare(type, x, y);
     }
 
@@ -136,5 +132,44 @@ export default class Grid {
 
     setGrid(grid) {
         this.grid = grid;
+    }
+
+
+    createSubgrid(squares) {
+        // Assumes square(x = 0, y = 0) is bottom left
+
+        // Create an empty 4x4 grid
+        const len = 4;
+        const subgrid = Array.from({ length: len }, () => Array(len).fill(0));
+
+
+        // Calculate minimum to have values 0 <= x, y <= 4
+        let minX = Infinity;
+        let minY = Infinity;
+
+        for (let square of squares) {
+            if (square.x < minX) {
+                minX = square.x;
+            }
+
+            if (square.y < minY) {
+                minY = square.y;
+            }
+        }
+
+
+        // Plot piece in 4x4 minigrid
+        let x, y;
+        for (let square of squares) {
+            x = square.x - minX;
+            y = square.y - minY;
+
+            if (0 <= x && x < len && 0 <= y && y < len) {
+                subgrid[y][x] = 1;
+            }
+        }
+
+        return subgrid;
+
     }
 }

@@ -29,6 +29,48 @@ export default class Piece {
     getRotate() {
         return this.rot;
     }
+
+    static calculatePieceType(t) {
+        // Template (t) is a 4x4 grid with 1s representing filled
+        // (x, y) = (0, 0) represents bottom-left
+
+        // o
+        if (t[0][0] && t[0][1] && t[1][0] && t[1][1]) { return "o"; }
+
+        // i
+        if (t[0][0] && t[0][1] && t[0][2] && t[0][3]) { return "i"; }
+        if (t[0][0] && t[1][0] && t[2][0] && t[3][0]) { return "i"; }
+
+        // l
+        if (t[0][0] && t[0][1] && t[0][2] && t[1][2]) { return "l"; }
+        if (t[2][0] && t[1][0] && t[0][0] && t[0][1]) { return "l"; }
+        if (t[0][0] && t[1][0] && t[1][1] && t[1][2]) { return "l"; }
+        if (t[2][0] && t[2][1] && t[1][1] && t[0][1]) { return "l"; }
+
+        // j
+        if (t[0][0] && t[0][1] && t[0][2] && t[1][0]) { return "j"; }
+        if (t[0][0] && t[1][0] && t[2][0] && t[2][1]) { return "j"; }
+        if (t[1][0] && t[1][1] && t[1][2] && t[0][2]) { return "j"; }
+        if (t[0][0] && t[0][1] && t[1][1] && t[2][1]) { return "j"; }
+
+        // s
+        if (t[0][0] && t[0][1] && t[1][1] && t[1][2]) { return "s"; }
+        if (t[2][0] && t[1][0] && t[1][1] && t[0][1]) { return "s"; }
+
+        // t
+        if (t[0][0] && t[0][1] && t[0][2] && t[1][1]) { return "t"; }
+        if (t[0][0] && t[1][0] && t[2][0] && t[1][1]) { return "t"; }
+        if (t[1][0] && t[1][1] && t[1][2] && t[0][1]) { return "t"; }
+        if (t[1][0] && t[0][1] && t[1][1] && t[2][1]) { return "t"; }
+
+        // z
+        if (t[1][0] && t[1][1] && t[0][1] && t[0][2]) { return "z"; }
+        if (t[0][0] && t[1][0] && t[1][1] && t[2][1]) { return "z"; }
+
+
+        return "g";
+    }
+
 }
 
 const pieces = {

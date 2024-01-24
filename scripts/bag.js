@@ -160,4 +160,8 @@ export default class Bag {
 
     }
 
+    calculatePieceType(template) {
+        return Piece.calculatePieceType(template);
+    }
+
 }
