@@ -221,6 +221,11 @@ export default class Display {
     }
 
     hoverGrid(ev, overFlowGrid) {
+        // Determine if active first
+        if (!this.triggerFill && !this.triggerClear) {
+            return;
+        }
+
         if (!this.game.sandbox() || this.blind) {
             return;
         }
@@ -238,7 +243,7 @@ export default class Display {
     }
 
     clickCell(cell) {
-        if (cell.className === "outline" || cell.className === "empty" || cell.className === "preview") {
+        if (this.empty(cell)) {
             this.triggerFill = true;
             this.triggerClear = false;
         } else {
@@ -247,31 +252,43 @@ export default class Display {
         }
     }
 
-    activateCell(cell, overFlowCell) {
+    empty(cell) {
+        return (cell.className === "outline" || cell.className === "empty" || cell.className === "preview");
+    }
+
+    activateCell(gridCell, overFlowCell) {
+        // If cell is occupied don't even consider on fill
+        if (this.triggerFill && !this.empty(gridCell)) {
+            return;
+        }
+
         let yOffset = 0;
         if (overFlowCell) {
             yOffset = 6;
         }
 
         // determine index
-        let x = cell.style.gridColumnStart - 1;
-        let y = 20 - cell.style.gridRowStart + yOffset;
+        let x = gridCell.style.gridColumnStart - 1;
+        let y = 20 - gridCell.style.gridRowStart + yOffset;
 
+        let cell;
         if (this.triggerFill) {
-            this.game.update({
+            cell = {
                 type: "fillSquare",
                 pieceType: "g",
                 x: x,
                 y: y,
-            });
+            };
         } else if (this.triggerClear) {
-            this.game.update({
+            cell = {
                 type: "fillSquare",
                 pieceType: "",
                 x: x,
                 y: y,
-            });
+            };
         }
+
+        this.game.update(cell);
     }
 
     bindHoldNextEvents() {
