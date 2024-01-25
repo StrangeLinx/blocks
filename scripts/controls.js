@@ -34,7 +34,15 @@ export default class Controls {
             "Restart": { type: "restart" },
             "Pause": { type: "pause" },
             "Undo": { type: "undo" },
-            "Redo": { type: "redo" }
+            "Redo": { type: "redo" },
+            "Fill Type O": { type: "fill", pieceType: "o" },
+            "Fill Type I": { type: "fill", pieceType: "i" },
+            "Fill Type L": { type: "fill", pieceType: "l" },
+            "Fill Type J": { type: "fill", pieceType: "j" },
+            "Fill Type S": { type: "fill", pieceType: "s" },
+            "Fill Type T": { type: "fill", pieceType: "t" },
+            "Fill Type Z": { type: "fill", pieceType: "z" },
+            "Fill Type G": { type: "fill", pieceType: "g" },
         };
     }
 
@@ -47,8 +55,8 @@ export default class Controls {
 
         let version = localStorage.getItem("version");
 
-        if (version !== "1.2") {
-            localStorage.setItem("version", "1.2");
+        if (version !== "1.3") {
+            localStorage.setItem("version", "1.3");
             this.loadDefaultKeybinds();
             this.saveUserKeybindPreferences();
             return;
@@ -80,7 +88,15 @@ export default class Controls {
             "Restart": "r",
             "Pause": "escape",
             "Undo": ["control", "z"],
-            "Redo": ["control", "y"]
+            "Redo": ["control", "y"],
+            "Fill Type O": ["alt", "o"],
+            "Fill Type I": ["alt", "i"],
+            "Fill Type L": ["alt", "l"],
+            "Fill Type J": ["alt", "j"],
+            "Fill Type S": ["alt", "s"],
+            "Fill Type T": ["alt", "t"],
+            "Fill Type Z": ["alt", "z"],
+            "Fill Type G": ["alt", "g"],
         };
         this.createPressed();
     }

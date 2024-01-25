@@ -21,6 +21,8 @@ export default class Game {
         this.startCountdown = false;
         this.countingDown = false;
 
+        this.fillPieceType = "g";
+
     }
 
     new(fromMenu = false) {
@@ -95,6 +97,11 @@ export default class Game {
         }
         if (move.type === "editNext") {
             this.updateNext(move.pieces);
+            return true;
+        }
+
+        if (move.type === "fill") {
+            this.fillPieceType = move.pieceType;
             return true;
         }
 

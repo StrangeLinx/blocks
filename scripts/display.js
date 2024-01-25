@@ -277,7 +277,7 @@ export default class Display {
         if (this.triggerFill) {
             cell = {
                 type: "fillSquare",
-                pieceType: "g",
+                pieceType: this.game.fillPieceType,
                 x: x,
                 y: y,
             };
@@ -307,6 +307,12 @@ export default class Display {
 
 
         if (!this.autocolorEnabled) {
+            return false;
+        }
+
+        // If player decided on a specific desired color, don't autocolor
+        if (this.game.fillPieceType !== "g") {
+            this.activatedCells = [];
             return false;
         }
 

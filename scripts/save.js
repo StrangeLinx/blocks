@@ -113,7 +113,7 @@ export default class Save {
         clone.restartOnModeChange = game.restartOnModeChange;
         clone.lastMove = game.lastMove;
 
-        // Keep current startTime, timeElapsed, undoOnDrop preference
+        // Keep current startTime, timeElapsed, undoOnDrop preference, piece fill type
 
     }
 
