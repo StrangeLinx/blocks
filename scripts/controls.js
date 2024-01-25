@@ -202,7 +202,9 @@ export default class Controls {
         };
     }
 
-    press(key) {
+    press(ev) {
+
+        let key = ev.key.toLowerCase();
 
         if (!(key in this.pressed)) {
             return;
@@ -214,11 +216,16 @@ export default class Controls {
         }
         this.pressed[key] = true;
 
-        // Ensure it's a valid key press
+        // Ensure there's a valid action relating to keys pressed
         let action = this.getControl(key);
         if (!action) {
             return;
         }
+
+        // Prevent default browser actions when key is mapped
+        // Ex: Prevent Shift + Right key combo to highlight
+        //     Prevent Slash (/) in FireFox from opening Quick find (if key is mapped)
+        ev.preventDefault();
 
         let move = this.moves[action];
         if (action === "Left") {

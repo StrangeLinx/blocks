@@ -91,7 +91,7 @@ document.addEventListener("keydown", ev => {
     if (menu.active()) {
         menu.press(key);
     } else {
-        controls.press(key);
+        controls.press(ev);
     }
 });
 
