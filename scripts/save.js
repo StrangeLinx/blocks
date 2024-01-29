@@ -138,6 +138,12 @@ export default class Save {
 
     cloneGrid(clone, game) {
         clone.grid = new Grid();
+
+        // Keep previous garbage queue
+        // If player restores a previous state where they had garbage,
+        // the grid will keep this garbage in the queue
+        clone.grid.garbageQueue = game.grid.garbageQueue;
+        clone.grid.garbageHole = game.grid.garbageHole;
         for (let i = 0; i < clone.grid.grid.length; i++) {
             clone.grid.grid[i] = [...game.grid.grid[i]];
         }

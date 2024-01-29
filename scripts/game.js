@@ -105,6 +105,10 @@ export default class Game {
             return true;
         }
 
+        if (move.type === "attack") {
+            this.receiveLines(move.amount);
+        }
+
         return false;
     }
 
@@ -388,6 +392,9 @@ export default class Game {
         this.tSpin = false;
         this.kicked = false;
 
+        // Add garbage queue to grid
+        this.grid.receiveGarbage();
+
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
 
@@ -638,6 +645,10 @@ export default class Game {
         this.pause();
         this.over = true;
         this.updatedGameOver = true;
+    }
+
+    receiveLines(amount) {
+        this.grid.queueGarbage(amount, 0);
     }
 
     saveState(move) {

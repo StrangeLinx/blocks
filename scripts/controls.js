@@ -43,6 +43,7 @@ export default class Controls {
             "Fill Type T": { type: "fill", pieceType: "t" },
             "Fill Type Z": { type: "fill", pieceType: "z" },
             "Fill Type G": { type: "fill", pieceType: "g" },
+            "Garbage": { type: "attack", amount: 1 },
         };
     }
 
@@ -97,6 +98,7 @@ export default class Controls {
             "Fill Type T": ["alt", "t"],
             "Fill Type Z": ["alt", "z"],
             "Fill Type G": ["alt", "g"],
+            "Garbage": ["alt", "1"]
         };
         this.createPressed();
     }

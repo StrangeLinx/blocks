@@ -5,6 +5,8 @@ export default class Grid {
         this.rows = 26;
         this.cols = 10;
         this.linesCleared = 0;
+        this.garbageQueue = [];
+        this.newGarbageHole();
         this.newGrid();
     }
 
@@ -15,6 +17,10 @@ export default class Grid {
     emptyGrid() {
         // Make an empty grid with dimensions - rows * cols (26 by 10)
         return Array.from({ length: this.rows }, () => Array(this.cols).fill(""));
+    }
+
+    newGarbageHole() {
+        this.garbageHole = Math.floor(Math.random() * this.cols);
     }
 
     place(piece) {
@@ -109,6 +115,46 @@ export default class Grid {
         this.linesCleared++;
     }
 
+    queueGarbage(amount, cheesiness) {
+        for (let i = 0; i < amount; i++) {
+            this.addLineToGarbageQueue(cheesiness);
+        }
+
+    }
+
+    addLineToGarbageQueue(cheesiness) {
+        // Full garbage row
+        const garbageLine = Array(this.cols).fill("g");
+
+        // Generate new garbage hole
+        // If cheesiness is 0, then garbage is considered clean
+        if (Math.random() < cheesiness) {
+            this.newGarbageHole();
+        }
+
+        // Add hole then add to garbage queue
+        garbageLine[this.garbageHole] = "";
+        this.garbageQueue.push(garbageLine);
+    }
+
+    receiveGarbage() {
+        if (this.garbageQueue.length <= 0) {
+            return;
+        }
+
+        // Remove lines that will be added
+        const start = this.rows - this.garbageQueue.length;
+        this.grid.splice(start, this.cols);
+
+        // Add garbage lines
+        for (let i = 0; i < this.garbageQueue.length; i++) {
+            this.grid.unshift(this.garbageQueue[i]);
+        }
+
+        // Clear out garbage queue
+        this.garbageQueue = [];
+    }
+
     checkPerfectClear() {
         // A perfect clear is when the last piece caused the board to be completely empty
         for (let y = 0; y < this.rows; y++) {
@@ -127,7 +173,7 @@ export default class Grid {
     }
 
     getGrid() {
-        return this.grid;
+        return this.grid.slice(0, this.rows);
     }
 
     setGrid(grid) {
