@@ -20,7 +20,11 @@ export default class Grid {
     }
 
     newGarbageHole() {
-        this.garbageHole = Math.floor(Math.random() * this.cols);
+        let oldHole = this.garbageHole;
+        // Ensure a different garbage hole every time
+        do {
+            this.garbageHole = Math.floor(Math.random() * this.cols);
+        } while (this.garbageHole === oldHole);
     }
 
     place(piece) {
