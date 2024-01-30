@@ -26,6 +26,7 @@ export default class Menu {
         this.mainMenu = document.querySelector("#main-menu");
         this.changeModeMenu = document.querySelector("#change-mode-menu");
         this.modePreferenceMenu = document.querySelector("#mode-preference-menu");
+        this.garbageSettingsMenu = document.querySelector("#garbage-settings-menu");
         this.settingsMenu = document.querySelector("#settings-menu");
         this.controlsMenu = document.querySelector("#controls-menu");
         this.handlingMenu = document.querySelector("#handling-menu");
@@ -51,14 +52,19 @@ export default class Menu {
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
 
         // Mode Preference Menu
+        this.modeGarbageSettingsButton = document.querySelector(".mode-garbage-settings");
         this.autocolorButton = document.querySelector(".autocolor");
         this.lookaheadShowQueueButton = document.querySelector(".lookahead-show-queue");
         this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
 
+        // Garbage settings menu
+        this.garbageSettingsDoneButton = document.querySelector(".garbage-settings-done");
+
         // Settings menu
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
+        this.garbageSettingsButton = document.querySelector(".garbage-settings");
         this.restoreButton = document.querySelector(".restore-button");
         this.settingsDoneButton = document.querySelector(".settings-done-button");
 
@@ -137,6 +143,11 @@ export default class Menu {
 
         // Mode Specific Preferences
         this.loadUserModePreferences();
+        this.modeGarbageSettingsButton.addEventListener("click", ev => {
+            this.hide(this.modePreferenceMenu);
+            this.activeMenu = "garbageSettings";
+            this.show(this.garbageSettingsMenu);
+        });
         this.autocolorButton.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.display.autocolorEnabled = status;
@@ -167,6 +178,9 @@ export default class Menu {
             this.show(this.changeModeMenu);
         });
 
+        // Garbage Settings menu
+        this.garbageSettingsDoneButton.addEventListener("click", () => this.hideGarbageSettings());
+
         // Settings menu
         this.controlsButton.addEventListener("click", () => {
             this.hide(this.settingsMenu);
@@ -178,6 +192,16 @@ export default class Menu {
             this.hide(this.settingsMenu);
             this.activeMenu = "handling";
             this.show(this.handlingMenu);
+        });
+
+        this.garbageSettingsButton.addEventListener("click", () => {
+            // This button is also available in the Mode Preferences menu
+            // Ensure to return to the correct menu after closing garbage settings
+            this.returnToSettings = true;
+
+            this.hide(this.settingsMenu);
+            this.activeMenu = "garbageSettings";
+            this.show(this.garbageSettingsMenu);
         });
 
         this.restoreButton.addEventListener("click", () => {
@@ -611,6 +635,20 @@ export default class Menu {
         }
     }
 
+    hideGarbageSettings() {
+        this.hide(this.garbageSettingsMenu);
+
+        if (this.returnToSettings) {
+            this.activeMenu = "settings";
+            this.show(this.settingsMenu);
+            this.returnToSettings = false;
+        } else {
+            this.activeMenu = "modePreference";
+            this.show(this.modePreferenceMenu);
+        }
+
+    }
+
     hideControls() {
         if (this.activeKeybindButton) {
             this.activeKeybindButton.classList.remove("pending-user-input");
@@ -700,6 +738,11 @@ export default class Menu {
             this.hide(this.modePreferenceMenu);
             this.activeMenu = "changeMode";
             this.show(this.changeModeMenu);
+        }
+
+        else if (this.activeMenu === "garbageSettings") {
+            console.log("In here");
+            this.hideGarbageSettings();
         }
 
         else if (this.activeMenu === "results") {
