@@ -152,7 +152,7 @@ export default class Grid {
 
         // Add garbage lines
         for (let i = 0; i < this.garbageQueue.length; i++) {
-            this.grid.unshift(this.garbageQueue[i]);
+            this.grid.unshift(this.garbageQueue[i].slice());
         }
 
         // Clear out garbage queue
