@@ -75,6 +75,11 @@ function draw() {
         display.setStats(game.getLinesCleared(), game.getB2B(), game.getCombo(), game.getPiecesPlaced(), game.getAttack());
     }
 
+    if (game.getUpdatedGarbage()) {
+        display.drawGarbageLines(game.getGarbageLines());
+        game.setUpdatedGarbage(false);
+    }
+
     if (game.getStartCountdown()) {
         display.drawCountdown(game.getResetTimer());
         game.setStartCountdown(false);

@@ -16,6 +16,7 @@ export default class Display {
 
         this.createHoldCells();
         this.createNextCells();
+        this.createGarbageCells();
 
         // hold, next edit options
         this.bindHoldNextEvents();
@@ -66,6 +67,7 @@ export default class Display {
         this.nextCells = [];
         this.hold = document.querySelector("#holdPiece");
         this.next = document.querySelector("#next");
+        this.garbage = document.querySelector("#garbage-lines");
 
 
         // Stats
@@ -124,6 +126,18 @@ export default class Display {
         height = unit * this.nextRows;
 
         this.next.style.height = `${height}rem`;
+
+        // Garbage can be any number but only 20 (same as grid) will be shown
+        width = unit * 0.33;
+        height = unit * this.rows;
+        this.garbage.style.width = `${width}rem`;
+        this.garbage.style.height = `${height}rem`;
+        // Positioning
+        width = 6.47 * unit;
+        height = 6.3 * unit;
+        this.garbage.style.left = `${width}rem`;
+        this.garbage.style.top = `${height}rem`;
+
     }
 
     setBlind(flag, showQueue) {
@@ -190,6 +204,22 @@ export default class Display {
             }
             this.nextCells.push(row);
         }
+    }
+
+    createGarbageCells() {
+        this.garbageCells = [];
+        for (let r = 0; r < this.rows; r++) {
+            let cell = this.createGarbageCell(r + 1);
+            this.garbage.appendChild(cell);
+            this.garbageCells.unshift(cell);
+        }
+    }
+
+    createGarbageCell(row) {
+        const cell = document.createElement("div");
+        cell.style.gridRowStart = row;
+        cell.style.gridColumnStart = 1;
+        return cell;
     }
 
     bindGridEvents() {
@@ -491,6 +521,24 @@ export default class Display {
                 xCenter += 5;
                 yCenter = 2;
             }
+        }
+    }
+
+    drawGarbageLines(amount) {
+        this.clearGarbageLines();
+
+        if (amount > 20) {
+            amount = 20;
+        }
+
+        for (let i = 0; i < amount; i++) {
+            this.garbageCells[i].classList.add("pending");
+        }
+    }
+
+    clearGarbageLines() {
+        for (let i = 0; i < this.garbageCells.length; i++) {
+            this.garbageCells[i].classList.remove("pending");
         }
     }
 

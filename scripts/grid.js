@@ -139,7 +139,7 @@ export default class Grid {
 
     receiveGarbage() {
         if (this.garbageQueue.length <= 0) {
-            return;
+            return false;
         }
 
         // Remove lines that will be added
@@ -153,6 +153,7 @@ export default class Grid {
 
         // Clear out garbage queue
         this.garbageQueue = [];
+        return true;
     }
 
     checkPerfectClear() {
@@ -178,6 +179,10 @@ export default class Grid {
 
     setGrid(grid) {
         this.grid = grid;
+    }
+
+    getGarbageLines() {
+        return this.garbageQueue.length;
     }
 
 

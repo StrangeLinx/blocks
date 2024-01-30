@@ -38,6 +38,7 @@ export default class Game {
         this.updatedGrid = true;
         this.updatedHold = true;
         this.updatedNext = true;
+        this.updatedGarbage = true;
 
         this.linesCleared = 0;
         this.tSpin = false;
@@ -178,6 +179,7 @@ export default class Game {
         this.updatedGrid = true;
         this.updatedHold = true;
         this.updatedNext = true;
+        this.updatedGarbage = true;
 
         if (this.mode.type === "sprint") {
             clearTimeout(this.countdownTimeout);
@@ -233,6 +235,7 @@ export default class Game {
         this.updatedGrid = true;
         this.updatedHold = true;
         this.updatedNext = true;
+        this.updatedGarbage = true;
 
         // Stop countdown
         clearTimeout(this.countdownTimeout);
@@ -393,7 +396,9 @@ export default class Game {
         this.kicked = false;
 
         // Add garbage queue to grid
-        this.grid.receiveGarbage();
+        if (this.grid.receiveGarbage()) {
+            this.updatedGarbage = true;
+        }
 
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
@@ -649,6 +654,7 @@ export default class Game {
 
     receiveLines(amount) {
         this.grid.queueGarbage(amount, 0);
+        this.updatedGarbage = true;
     }
 
     saveState(move) {
@@ -797,6 +803,18 @@ export default class Game {
 
     setUpdatedNext(updated) {
         this.updatedNext = updated;
+    }
+
+    getUpdatedGarbage() {
+        return this.updatedGarbage;
+    }
+
+    setUpdatedGarbage(updated) {
+        this.updatedGarbage = updated;
+    }
+
+    getGarbageLines() {
+        return this.grid.getGarbageLines();
     }
 
     getGrid() {

@@ -189,6 +189,7 @@ export default class Save {
         game.updatedGrid = true;
         game.updatedHold = true;
         game.updatedNext = true;
+        game.updatedGarbage = true;
 
         // Maintain current number of lookahead pieces
         let temp = game.mode.numLookaheadPieces;
