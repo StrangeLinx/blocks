@@ -59,6 +59,15 @@ export default class Menu {
         this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
 
         // Garbage settings menu
+        this.cheeseLayerButton = document.querySelector(".garbage-cheese-layer-container");
+        this.cheeseLayerInput = document.querySelector("#garbage-cheese-layer");
+        this.APSButton = document.querySelector(".garbage-APS-container");
+        this.APSAttackInput = document.querySelector("#APS-attack");
+        this.APSSecondInput = document.querySelector("#APS-second");
+        this.backfireButton = document.querySelector(".garbage-backfire-container");
+        this.backfireInput = document.querySelector("#garbage-backfire");
+        this.comboBlockingButton = document.querySelector(".combo-blocking");
+        this.cheesinessInput = document.querySelector("#cheesiness");
         this.garbageSettingsDoneButton = document.querySelector(".garbage-settings-done");
 
         // Settings menu
@@ -143,11 +152,13 @@ export default class Menu {
 
         // Mode Specific Preferences
         this.loadUserModePreferences();
+
         this.modeGarbageSettingsButton.addEventListener("click", ev => {
             this.hide(this.modePreferenceMenu);
             this.activeMenu = "garbageSettings";
             this.show(this.garbageSettingsMenu);
         });
+
         this.autocolorButton.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.display.autocolorEnabled = status;
@@ -156,6 +167,7 @@ export default class Menu {
                 localStorage.setItem("autocolor", status);
             }
         });
+
         this.lookaheadShowQueueButton.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.game.mode.lookaheadShowQueue = status;
@@ -164,6 +176,7 @@ export default class Menu {
                 localStorage.setItem("showQueue", status);
             }
         });
+
         this.finesseRequire180Button.addEventListener("click", ev => {
             let status = ev.target.classList.toggle("user-choice");
             this.game.mode.finesseRequire180 = status;
@@ -172,6 +185,7 @@ export default class Menu {
                 localStorage.setItem("require180", status);
             }
         });
+
         this.modePreferenceDoneButton.addEventListener("click", () => {
             this.hide(this.modePreferenceMenu);
             this.activeMenu = "changeMode";
@@ -179,6 +193,54 @@ export default class Menu {
         });
 
         // Garbage Settings menu
+        this.cheeseLayerButton.addEventListener("click", ev => {
+            // Clicking on a label produces two click events (one on label and second on input)
+            // Prevent two events from happening if clicked on label
+            if (ev.target !== this.cheeseLayerButton && ev.target !== this.cheeseLayerInput) {
+                return;
+            }
+            this.highlightGarbageMode(ev.currentTarget);
+        });
+
+        this.APSButton.addEventListener("click", ev => {
+            if (ev.target !== this.APSButton && ev.target !== this.APSAttackInput && ev.target !== this.APSSecondInput) {
+                return;
+            }
+            this.highlightGarbageMode(ev.currentTarget);
+        });
+
+        this.backfireButton.addEventListener("click", ev => {
+            if (ev.target !== this.backfireButton && ev.target !== this.backfireInput) {
+                return;
+            }
+            this.highlightGarbageMode(ev.currentTarget);
+        });
+
+        this.comboBlockingButton.addEventListener("click", () => {
+            let status = this.comboBlockingButton.classList.toggle("user-choice");
+        });
+
+        this.cheeseLayerInput.addEventListener("blur", ev => {
+            console.log(ev.currentTarget.value);
+        });
+
+        this.APSAttackInput.addEventListener("blur", ev => {
+            console.log(ev.currentTarget.value);
+        });
+
+        this.APSSecondInput.addEventListener("blur", ev => {
+            console.log(ev.currentTarget.value);
+        });
+
+        this.backfireInput.addEventListener("blur", ev => {
+            console.log(ev.currentTarget.value);
+        });
+
+        this.cheesinessInput.addEventListener("blur", ev => {
+            console.log(ev.currentTarget.value);
+        });
+
+
         this.garbageSettingsDoneButton.addEventListener("click", () => this.hideGarbageSettings());
 
         // Settings menu
@@ -335,6 +397,24 @@ export default class Menu {
             this.show(this.mainMenu);
             this.activeMenu = "main";
         });
+    }
+
+    highlightGarbageMode(garbageModeButton) {
+
+        // If inactivating, simply turn off
+        let status = garbageModeButton.classList.toggle("user-choice");
+        if (!status) {
+            return;
+        }
+
+        // Else activating mode
+
+        // If another option was active remove status
+        this.cheeseLayerButton.classList.remove("user-choice");
+        this.APSButton.classList.remove("user-choice");
+        this.backfireButton.classList.remove("user-choice");
+
+        garbageModeButton.classList.add("user-choice");
     }
 
     updateQueueSize() {
@@ -741,7 +821,6 @@ export default class Menu {
         }
 
         else if (this.activeMenu === "garbageSettings") {
-            console.log("In here");
             this.hideGarbageSettings();
         }
 

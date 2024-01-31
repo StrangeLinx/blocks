@@ -340,6 +340,26 @@ label {
     border: 2px solid rgba(0, 0, 0, 0);
 }
 
+.menu-option.static,
+.menu-option.static:hover,
+.menu-option.static:active {
+    border: 2px solid black;
+    border-top: 2px solid white;
+    margin-top: 2rem;
+    /* border-bottom: 2px solid white; */
+    cursor: default;
+}
+
+.two-input-options {
+    box-sizing: border-box;
+    width: 14.2rem;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    align-items: flex-end;
+    padding-right: 0.6rem;
+}
+
 .keybind-option.pending-user-input,
 .keybind-option.pending-user-input:hover,
 .keybind-option.pending-user-input:active {
@@ -421,23 +441,30 @@ label {
     transition: 0.1s;
 }
 
+#garbage-settings-menu .user-choice,
 #change-mode-menu .user-choice,
 #mode-preference-menu .user-choice,
 .restore-option.user-choice {
     border: 2px solid #7ACD44;
 }
 
+#garbage-settings-menu .user-choice:hover,
 #change-mode-menu .user-choice:hover,
 #mode-preference-menu .user-choice:hover,
 .restore-option.user-choice:hover {
     border: 2px solid #c8ffc5;
 }
 
+#garbage-settings-menu .user-choice:active,
 #change-mode-menu .user-choice:active,
 #mode-preference-menu .user-choice:active,
 .restore-option.user-choice:active {
     border: 2px solid black;
     border: 2px solid rgba(0, 0, 0, 0);
+}
+
+#garbage-settings-menu input {
+    width: 2rem;
 }
 
 span.invalid {
