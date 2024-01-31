@@ -193,6 +193,7 @@ export default class Menu {
         });
 
         // Garbage Settings menu
+        this.loadUserGarbagePreferences();
         this.cheeseLayerButton.addEventListener("click", ev => {
             // Clicking on a label produces two click events (one on label and second on input)
             // Prevent two events from happening if clicked on label
@@ -218,26 +219,57 @@ export default class Menu {
 
         this.comboBlockingButton.addEventListener("click", () => {
             let status = this.comboBlockingButton.classList.toggle("user-choice");
+            this.saveGarbagePreference("comboBlocking", status);
         });
 
+
         this.cheeseLayerInput.addEventListener("blur", ev => {
-            console.log(ev.currentTarget.value);
+            // Only allow integer in range [1, 20]
+            if (!this.validGarbageInput(ev, true, 1, 20)) {
+                return;
+            }
+            let num = Number(ev.currentTarget.value);
+            this.saveGarbagePreference("cheeseLayer", num);
         });
 
         this.APSAttackInput.addEventListener("blur", ev => {
-            console.log(ev.currentTarget.value);
+            // range [1, 20]
+            if (!this.validGarbageInput(ev, true, 1, 20)) {
+                return;
+            }
+            let num = Number(ev.currentTarget.value);
+            this.saveGarbagePreference("APSAttack", num);
+
         });
 
         this.APSSecondInput.addEventListener("blur", ev => {
-            console.log(ev.currentTarget.value);
+            // range [0.1, 600]
+            if (!this.validGarbageInput(ev, false, 0.1, 600)) {
+                return;
+            }
+            let num = Number(ev.currentTarget.value);
+            this.saveGarbagePreference("APSSecond", num);
+
         });
 
         this.backfireInput.addEventListener("blur", ev => {
-            console.log(ev.currentTarget.value);
+            // range [0.01, 20]
+            if (!this.validGarbageInput(ev, false, 0.01, 20)) {
+                return;
+            }
+            let num = Number(ev.currentTarget.value);
+            this.saveGarbagePreference("backfireRate", num);
+
         });
 
         this.cheesinessInput.addEventListener("blur", ev => {
-            console.log(ev.currentTarget.value);
+            // range [0, 100]
+            if (!this.validGarbageInput(ev, false, 0, 100)) {
+                return;
+            }
+            let num = Number(ev.currentTarget.value);
+            this.saveGarbagePreference("cheesiness", num);
+
         });
 
 
@@ -526,6 +558,40 @@ export default class Menu {
 
     }
 
+    validGarbageInput(ev, checkInt, min, max) {
+        let val = ev.currentTarget.value;
+        let num = Number(val);
+
+        // Check if null or infinite
+        if (!val || !isFinite(num)) {
+            ev.currentTarget.classList.add("invalid");
+            return false;
+        }
+
+        // Check if integer when requested
+        if (checkInt && !Number.isInteger(num)) {
+            ev.currentTarget.classList.add("invalid");
+            return false;
+        }
+
+        // Check inclusive range. num is in [min, max]
+        if (num < min || num > max) {
+            ev.currentTarget.classList.add("invalid");
+            return false;
+        }
+
+        ev.currentTarget.classList.remove("invalid");
+        return true;
+    }
+
+    saveGarbagePreference(key, val) {
+        if (!this.controls.localStorageSupport()) {
+            return;
+        }
+
+        localStorage.setItem(key, val);
+    }
+
     loadUserModePreferences() {
 
         // autocolor is initially on
@@ -562,6 +628,38 @@ export default class Menu {
         if (finesseStrict180) {
             this.game.mode.finesseRequire180 = finesseStrict180;
             this.finesseRequire180Button.classList.add("user-choice");
+        }
+    }
+
+    loadUserGarbagePreferences() {
+        if (!this.controls.localStorageSupport()) {
+            return;
+        }
+
+        let cheeseLayer = localStorage.getItem("cheeseLayer");
+        let APSAttack = localStorage.getItem("APSAttack");
+        let APSSecond = localStorage.getItem("APSSecond");
+        let backfireRate = localStorage.getItem("backfireRate");
+        let cheesiness = localStorage.getItem("cheesiness");
+        let comboBlocking = (localStorage.getItem("comboBlocking") === "true");
+
+        if (cheeseLayer && isFinite(cheeseLayer)) {
+            this.cheeseLayerInput.value = cheeseLayer;
+        }
+        if (APSAttack && isFinite(APSAttack)) {
+            this.APSAttackInput.value = APSAttack;
+        }
+        if (APSSecond && isFinite(APSSecond)) {
+            this.APSSecondInput.value = APSSecond;
+        }
+        if (backfireRate && isFinite(backfireRate)) {
+            this.backfireInput.value = backfireRate;
+        }
+        if (cheesiness && isFinite(cheesiness)) {
+            this.cheesinessInput.value = cheesiness;
+        }
+        if (comboBlocking) {
+            this.comboBlockingButton.classList.add("user-choice");
         }
     }
 
