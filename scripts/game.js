@@ -23,8 +23,10 @@ export default class Game {
 
         this.fillPieceType = "g";
 
+        // Garbage settings
         this.APS = false;
         this.comboBlocking = false;
+        this.backfire = false;
 
     }
 
@@ -420,16 +422,7 @@ export default class Game {
         this.tSpin = false;
         this.kicked = false;
 
-        // If combo block is enabled then block garbage
-        if (this.comboBlocking && lineClears > 0) {
-            if (this.grid.cancelGarbage(attack)) {
-                this.updatedGarbage = true;
-            }
-        }
-        // add garbage queue to grid
-        else if (this.grid.receiveGarbage()) {
-            this.updatedGarbage = true;
-        }
+        this.updateGarbage(lineClears, attack);
 
         // Player can win or lose after a piece is dropped
         this.checkGameOver();
@@ -503,6 +496,29 @@ export default class Game {
 
         // Not finite
         return 0;
+    }
+
+    updateGarbage(lineClears, attack) {
+        let linesCancelled = 0;
+
+        // If combo block is enabled then block garbage
+        if (this.comboBlocking && lineClears > 0) {
+            linesCancelled = this.grid.cancelGarbage(attack);
+            if (linesCancelled > 0) {
+                this.updatedGarbage = true;
+            }
+        }
+        // add garbage queue to grid
+        else if (this.grid.receiveGarbage()) {
+            this.updatedGarbage = true;
+        }
+
+        // If backfire is enabled then add remaining attack to garbage queue
+        if (this.backfire) {
+            let backfireLines = Math.floor((attack - linesCancelled) * this.backfireRate);
+            this.receiveAttack(backfireLines);
+        }
+
     }
 
     calculateDrop(piece) {

@@ -120,7 +120,7 @@ export default class Grid {
     }
 
     queueGarbage(amount, cheesiness) {
-        if (this.garbageLimitReached()) {
+        if (this.garbageLimitReached() || amount < 0) {
             return;
         }
 
@@ -155,11 +155,11 @@ export default class Grid {
 
     cancelGarbage(attack) {
         if (attack <= 0 || this.garbageQueue.length <= 0) {
-            return false;
+            return 0;
         }
 
-        this.garbageQueue.splice(0, attack);
-        return true;
+        let linesCancelled = this.garbageQueue.splice(0, attack).length;
+        return linesCancelled;
     }
 
     receiveGarbage() {

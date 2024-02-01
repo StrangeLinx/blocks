@@ -200,22 +200,23 @@ export default class Menu {
             if (ev.target !== this.cheeseLayerButton && ev.target !== this.cheeseLayerInput) {
                 return;
             }
-            this.activateGarbageMode(ev.currentTarget);
+            this.toggleGarbageMode(ev.currentTarget);
         });
 
         this.APSButton.addEventListener("click", ev => {
             if (ev.target !== this.APSButton && ev.target !== this.APSAttackInput && ev.target !== this.APSSecondInput) {
                 return;
             }
-            this.activateGarbageMode(ev.currentTarget);
-            this.game.APS = true;
+            let status = this.toggleGarbageMode(ev.currentTarget);
+            this.game.APS = status;
         });
 
         this.backfireButton.addEventListener("click", ev => {
             if (ev.target !== this.backfireButton && ev.target !== this.backfireInput) {
                 return;
             }
-            this.activateGarbageMode(ev.currentTarget);
+            let status = this.toggleGarbageMode(ev.currentTarget);
+            this.game.backfire = status;
         });
 
         this.comboBlockingButton.addEventListener("click", () => {
@@ -263,7 +264,7 @@ export default class Menu {
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("backfireRate", num);
-
+            this.game.backfireRate = num;
         });
 
         this.cheesinessInput.addEventListener("blur", ev => {
@@ -435,15 +436,16 @@ export default class Menu {
         });
     }
 
-    activateGarbageMode(garbageModeButton) {
+    toggleGarbageMode(garbageModeButton) {
 
         // Remove all statuses
         this.game.APS = false;
+        this.game.backfire = false;
 
         // If inactivating, simply turn off
         let status = garbageModeButton.classList.toggle("user-choice");
         if (!status) {
-            return;
+            return false;
         }
 
         // Else activating mode
@@ -454,6 +456,7 @@ export default class Menu {
         this.backfireButton.classList.remove("user-choice");
 
         garbageModeButton.classList.add("user-choice");
+        return true;
     }
 
     updateQueueSize() {
@@ -663,6 +666,7 @@ export default class Menu {
         }
         if (backfireRate && isFinite(backfireRate)) {
             this.backfireInput.value = backfireRate;
+            this.game.backfireRate = backfireRate;
         }
         if (cheesiness && isFinite(cheesiness)) {
             this.cheesinessInput.value = cheesiness;
