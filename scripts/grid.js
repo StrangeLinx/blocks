@@ -120,25 +120,37 @@ export default class Grid {
     }
 
     queueGarbage(amount, cheesiness) {
-        for (let i = 0; i < amount; i++) {
-            this.addLineToGarbageQueue(cheesiness);
+        if (this.garbageLimitReached()) {
+            return;
         }
 
+        this.addLinesToGarbageQueue(amount, cheesiness);
     }
 
-    addLineToGarbageQueue(cheesiness) {
-        // Full garbage row
-        const garbageLine = Array(this.cols).fill("g");
+    garbageLimitReached() {
+        if (this.garbageQueue.length > 500) {
+            return true;
+        }
 
+        return false;
+    }
+
+    addLinesToGarbageQueue(amount, cheesiness) {
         // Generate new garbage hole
         // If cheesiness is 0, then garbage is considered clean
         if (Math.random() < cheesiness) {
             this.newGarbageHole();
         }
 
-        // Add hole then add to garbage queue
-        garbageLine[this.garbageHole] = "";
-        this.garbageQueue.push(garbageLine);
+        // Full garbage rows
+        const garbageLines = Array.from({ length: amount }, () => Array(this.cols).fill("g"));
+
+        // Add hole to each garbage line and add to garbage queue
+        for (let i = 0; i < amount; i++) {
+            garbageLines[i][this.garbageHole] = "";
+            this.garbageQueue.push(garbageLines[i]);
+        }
+
     }
 
     receiveGarbage() {
@@ -146,18 +158,26 @@ export default class Grid {
             return false;
         }
 
+        // Allow a max of 8 lines to queue at a time
+        if (this.garbageQueue.length >= 8) {
+            this.receiveGarbageLines(8);
+        } else {
+            this.receiveGarbageLines(this.garbageQueue.length);
+        }
+
+        return true;
+    }
+
+    receiveGarbageLines(num) {
         // Remove lines that will be added
-        const start = this.rows - this.garbageQueue.length;
+        const start = this.rows - num;
         this.grid.splice(start, this.cols);
 
         // Add garbage lines
-        for (let i = 0; i < this.garbageQueue.length; i++) {
-            this.grid.unshift(this.garbageQueue[i].slice());
+        for (let i = 0; i < num; i++) {
+            this.grid.unshift(this.garbageQueue.shift());
         }
 
-        // Clear out garbage queue
-        this.garbageQueue = [];
-        return true;
     }
 
     checkPerfectClear() {
