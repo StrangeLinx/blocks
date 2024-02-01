@@ -221,6 +221,7 @@ export default class Menu {
         this.comboBlockingButton.addEventListener("click", () => {
             let status = this.comboBlockingButton.classList.toggle("user-choice");
             this.saveGarbagePreference("comboBlocking", status);
+            this.game.comboBlocking = status;
         });
 
 
@@ -669,6 +670,7 @@ export default class Menu {
         }
         if (comboBlocking) {
             this.comboBlockingButton.classList.add("user-choice");
+            this.game.comboBlocking = comboBlocking;
         }
     }
 

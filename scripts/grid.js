@@ -153,6 +153,15 @@ export default class Grid {
 
     }
 
+    cancelGarbage(attack) {
+        if (attack <= 0 || this.garbageQueue.length <= 0) {
+            return false;
+        }
+
+        this.garbageQueue.splice(0, attack);
+        return true;
+    }
+
     receiveGarbage() {
         if (this.garbageQueue.length <= 0) {
             return false;

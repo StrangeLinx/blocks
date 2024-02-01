@@ -24,6 +24,7 @@ export default class Game {
         this.fillPieceType = "g";
 
         this.APS = false;
+        this.comboBlocking = false;
 
     }
 
@@ -412,15 +413,21 @@ export default class Game {
         // Stats
         this.updateCombo(lineClears);
         this.updateB2B(lineClears);
-        this.updateAttack(lineClears);
+        let attack = this.updateAttack(lineClears);
 
         // Update t spin status after hard drop
         this.miniTSpin = false;
         this.tSpin = false;
         this.kicked = false;
 
-        // Add garbage queue to grid
-        if (this.grid.receiveGarbage()) {
+        // If combo block is enabled then block garbage
+        if (this.comboBlocking && lineClears > 0) {
+            if (this.grid.cancelGarbage(attack)) {
+                this.updatedGarbage = true;
+            }
+        }
+        // add garbage queue to grid
+        else if (this.grid.receiveGarbage()) {
             this.updatedGarbage = true;
         }
 
@@ -481,7 +488,7 @@ export default class Game {
     updateAttack(lineClears) {
         // No change on attack when there are no line clears
         if (lineClears === 0) {
-            return;
+            return 0;
         }
 
         // Attack is based on the parameters passed
@@ -491,7 +498,11 @@ export default class Game {
         // Validate attack
         if (isFinite(attack)) {
             this.totalAttack += attack;
+            return attack;
         }
+
+        // Not finite
+        return 0;
     }
 
     calculateDrop(piece) {
