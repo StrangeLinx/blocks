@@ -201,6 +201,7 @@ export default class Menu {
                 return;
             }
             this.toggleGarbageMode(ev.currentTarget);
+            this.game.activateCheeseLayer();
         });
 
         this.APSButton.addEventListener("click", ev => {
@@ -232,6 +233,7 @@ export default class Menu {
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("cheeseLayer", num);
             this.game.cheeseLayer = num;
+            this.game.activateCheeseLayer();
         });
 
         this.APSAttackInput.addEventListener("blur", ev => {
@@ -273,7 +275,7 @@ export default class Menu {
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("cheesiness", num);
-            this.game.cheesiness = num;
+            this.game.cheesiness = num / 100;
         });
 
 
@@ -656,23 +658,39 @@ export default class Menu {
 
         if (cheeseLayer && isFinite(cheeseLayer)) {
             this.cheeseLayerInput.value = cheeseLayer;
+            this.game.cheeseLayer = cheeseLayer;
+        } else {
+            this.game.cheeseLayer = Number(this.cheeseLayerInput.value); // default
         }
+
         if (APSAttack && isFinite(APSAttack)) {
             this.APSAttackInput.value = APSAttack;
             this.game.APSAttack = APSAttack;
+        } else {
+            this.game.APSAttack = Number(this.APSAttackInput.value);
         }
+
         if (APSSecond && isFinite(APSSecond)) {
             this.APSSecondInput.value = APSSecond;
             this.game.APSSecond = APSSecond;
+        } else {
+            this.game.APSSecond = Number(this.APSSecondInput.value);
         }
+
         if (backfireRate && isFinite(backfireRate)) {
             this.backfireInput.value = backfireRate;
             this.game.backfireRate = backfireRate;
+        } else {
+            this.game.backfireRate = Number(this.backfireInput.value);
         }
+
         if (cheesiness && isFinite(cheesiness)) {
             this.cheesinessInput.value = cheesiness;
-            this.game.cheesiness = cheesiness;
+            this.game.cheesiness = cheesiness / 100;
+        } else {
+            this.game.cheesiness = Number(this.cheesinessInput.value) / 100;
         }
+
         if (comboBlocking) {
             this.comboBlockingButton.classList.add("user-choice");
             this.game.comboBlocking = comboBlocking;

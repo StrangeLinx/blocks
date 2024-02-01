@@ -144,6 +144,8 @@ export default class Save {
         // the grid will keep this garbage in the queue
         clone.grid.garbageQueue = game.grid.garbageQueue;
         clone.grid.garbageHole = game.grid.garbageHole;
+        clone.grid.cheeseLayer = game.grid.cheeseLayer;
+        clone.grid.cheeseLinesCleared = game.grid.cheeseLinesCleared;
         for (let i = 0; i < clone.grid.grid.length; i++) {
             clone.grid.grid[i] = [...game.grid.grid[i]];
         }

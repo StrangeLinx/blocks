@@ -5,6 +5,8 @@ export default class Grid {
         this.rows = 26;
         this.cols = 10;
         this.linesCleared = 0;
+        this.cheeseLayer = 0;
+        this.cheeseLinesCleared = 0;
         this.garbageQueue = [];
         this.newGarbageHole();
         this.newGrid();
@@ -113,10 +115,63 @@ export default class Grid {
     }
 
     clearLine(y) {
+        this.cheeseCleared(y);
         // Remove row and add a new one on top
         this.grid.splice(y, 1);
         this.grid.push(new Array(this.cols).fill(""));
         this.linesCleared++;
+    }
+
+    cheeseCleared(row) {
+        // Cheese is cleared when the line belongs to one of the cheese layers
+        if (row < this.cheeseLayer) {
+            this.cheeseLayer--;
+            this.cheeseLinesCleared++;
+        }
+    }
+
+    updateCheeseLayer(cheesiness) {
+        if (this.cheeseLinesCleared <= 0) {
+            return;
+        }
+
+        // Restore cheese layer
+        this.addCheeseLayers(this.cheeseLinesCleared, cheesiness);
+        this.cheeseLayer += this.cheeseLinesCleared;
+        this.cheeseLinesCleared = 0;
+    }
+
+    adjustCheeseLayer(newLayers, cheesiness) {
+        let difference = newLayers - this.cheeseLayer;
+        this.cheeseLayer = newLayers;
+
+
+        if (difference === 0) {
+            return;
+        }
+
+        if (difference < 0) {
+            this.removeCheeseLayers(difference * (-1));
+        }
+
+        if (difference > 0) {
+            this.addCheeseLayers(difference, cheesiness);
+        }
+    }
+
+    removeCheeseLayers(amount) {
+        // Remove a layer and add a clean empty row on top
+        for (let i = 0; i < amount; i++) {
+            this.grid.shift();
+            this.grid.push(new Array(this.cols).fill(""));
+        }
+    }
+
+    addCheeseLayers(amount, cheesiness) {
+        for (let i = 0; i < amount; i++) {
+            this.addLinesToGarbageQueue(1, cheesiness);
+        }
+        this.receiveGarbage(amount);
     }
 
     queueGarbage(amount, cheesiness) {
@@ -162,14 +217,14 @@ export default class Grid {
         return linesCancelled;
     }
 
-    receiveGarbage() {
-        if (this.garbageQueue.length <= 0) {
+    receiveGarbage(limit = 8) {
+        if (this.garbageQueue.length <= 0 || limit === 0) {
             return false;
         }
 
-        // Allow a max of 8 lines to queue at a time
-        if (this.garbageQueue.length >= 8) {
-            this.receiveGarbageLines(8);
+        // Allow a max of 8 lines (default) to queue at a time
+        if (this.garbageQueue.length >= limit) {
+            this.receiveGarbageLines(limit);
         } else {
             this.receiveGarbageLines(this.garbageQueue.length);
         }

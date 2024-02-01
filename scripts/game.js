@@ -65,6 +65,8 @@ export default class Game {
         this.restartTimer = true;
         this.timeElapsed = 0;
 
+        this.newGarbage();
+
     }
 
     update(move) {
@@ -265,7 +267,6 @@ export default class Game {
             this.saveState("restart");
         }
 
-        this.stopAPS();
         this.new();
         this.lastMove = "restart";
 
@@ -499,7 +500,24 @@ export default class Game {
         return 0;
     }
 
+    newGarbage() {
+        if (this.APS) {
+            this.stopAPS();
+        }
+
+        else if (this.cheeseLayerActive) {
+            this.activateCheeseLayer();
+        }
+    }
+
     updateGarbage(lineClears, attack) {
+
+        // Cheese layer garbage mode
+        if (this.cheeseLayerActive && lineClears > 0) {
+            this.updateCheeseLayer();
+            return;
+        }
+
         let linesCancelled = 0;
 
         // If combo block is enabled then block garbage
@@ -707,6 +725,20 @@ export default class Game {
     receiveAttack(amount) {
         this.grid.queueGarbage(amount, this.cheesiness);
         this.updatedGarbage = true;
+    }
+
+    updateCheeseLayer() {
+        this.grid.updateCheeseLayer(this.cheesiness);
+    }
+
+    activateCheeseLayer() {
+        if (!this.cheeseLayerActive) {
+            return;
+        }
+        this.grid.updateCheeseLayer(this.cheesiness);
+
+        this.grid.adjustCheeseLayer(this.cheeseLayer, this.cheesiness);
+        this.updatedGrid = true;
     }
 
     saveState(move) {
