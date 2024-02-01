@@ -98,7 +98,7 @@ export default class Controls {
             "Fill Type T": ["alt", "t"],
             "Fill Type Z": ["alt", "z"],
             "Fill Type G": ["alt", "g"],
-            "Garbage": ["alt", "1"]
+            "Garbage": ["alt", "a"]
         };
         this.createPressed();
     }

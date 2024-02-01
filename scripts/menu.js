@@ -262,6 +262,11 @@ export default class Menu {
             this.toggleGarbageMode(ev.currentTarget);
         });
 
+        // Deactivate by double clicking
+        this.cheeseLayerButton.addEventListener("dblclick", () => this.deactivateGarbageMode());
+        this.APSButton.addEventListener("dblclick", () => this.deactivateGarbageMode());
+        this.backfireButton.addEventListener("dblclick", () => this.deactivateGarbageMode());
+
         this.comboBlockingButton.addEventListener("click", () => {
             let status = this.comboBlockingButton.classList.toggle("user-choice");
             this.saveGarbagePreference("comboBlocking", status);
@@ -495,28 +500,23 @@ export default class Menu {
     }
 
     toggleGarbageMode(garbageModeButton) {
+        // Deactivate all modes
+        this.deactivateGarbageMode();
 
+        // Activate mode clicked
+        garbageModeButton.classList.add("user-choice");
+        this.game[garbageModeButton.id] = true;
+    }
+
+    deactivateGarbageMode() {
         // Remove all statuses
         this.game.cheeseLayerActive = false;
         this.game.APS = false;
         this.game.backfire = false;
 
-        // If inactivating, simply turn off
-        let status = garbageModeButton.classList.toggle("user-choice");
-        if (!status) {
-            return false;
-        }
-
-        // If another option was active remove status
         this.cheeseLayerButton.classList.remove("user-choice");
         this.APSButton.classList.remove("user-choice");
         this.backfireButton.classList.remove("user-choice");
-
-        // Activate mode
-        garbageModeButton.classList.add("user-choice");
-        this.game[garbageModeButton.id] = true;
-
-        return true;
     }
 
     updateQueueSize() {
