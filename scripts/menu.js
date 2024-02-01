@@ -8,8 +8,8 @@ export default class Menu {
         this.controls = controls;
         this.display = display;
 
-        this.initMenus();
-        this.addButtonClickEvents();
+        this.createMenus();
+        this.bindMenuEvents();
         this.addCurrentKeybindsToControlsMenu();
         this.addCurrentValuesToHandlingMenu();
 
@@ -21,28 +21,32 @@ export default class Menu {
         this.maxQueueSize = 20;
     }
 
-    initMenus() {
-        // All menus
-        this.mainMenu = document.querySelector("#main-menu");
-        this.changeModeMenu = document.querySelector("#change-mode-menu");
-        this.modePreferenceMenu = document.querySelector("#mode-preference-menu");
-        this.garbageSettingsMenu = document.querySelector("#garbage-settings-menu");
-        this.settingsMenu = document.querySelector("#settings-menu");
-        this.controlsMenu = document.querySelector("#controls-menu");
-        this.handlingMenu = document.querySelector("#handling-menu");
-        this.restoreMenu = document.querySelector("#restore-menu");
-        this.resultsMenu = document.querySelector("#results-menu");
-        this.editQueueMenu = document.querySelector("#edit-queue-menu");
-        this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
-        this.finesseTipComment = document.querySelector("#finesse-tip-comment");
+    createMenus() {
+        this.createMainMenu();
+        this.createChangeModeMenu();
+        this.createModePreferenceMenu();
+        this.createGarbageSettingsMenu();
+        this.createSettingsMenu();
+        this.createControlsMenu();
+        this.createHandlingMenu();
+        this.createRestoreMenu();
+        this.createResultsMenu();
+        this.createEditQueueMenu();
+        this.createLookaheadReadyMenu();
+        this.createInGameElements();
+    }
 
-        // Main menu
+    createMainMenu() {
+        this.mainMenu = document.querySelector("#main-menu");
+        // Options
         this.playButton = document.querySelector(".play-button");
         this.changeModeButton = document.querySelector(".change-mode-button");
         this.settingsButton = document.querySelector(".settings-button");
         this.uploadButton = document.getElementById("load-file");
+    }
 
-        // Change Mode menu
+    createChangeModeMenu() {
+        this.changeModeMenu = document.querySelector("#change-mode-menu");
         this.freeButton = document.querySelector(".free-button");
         this.b2bButton = document.querySelector(".b2b-button");
         this.lookButton = document.querySelector(".lookahead-button");
@@ -50,15 +54,19 @@ export default class Menu {
         this.sprintButton = document.querySelector(".sprint-button");
         this.modePreferenceButton = document.querySelector(".mode-preference-button");
         this.changeModeDoneButton = document.querySelector(".change-mode-done");
+    }
 
-        // Mode Preference Menu
+    createModePreferenceMenu() {
+        this.modePreferenceMenu = document.querySelector("#mode-preference-menu");
         this.modeGarbageSettingsButton = document.querySelector(".mode-garbage-settings");
         this.autocolorButton = document.querySelector(".autocolor");
         this.lookaheadShowQueueButton = document.querySelector(".lookahead-show-queue");
         this.finesseRequire180Button = document.querySelector(".finesse-require-180-button");
         this.modePreferenceDoneButton = document.querySelector(".mode-preference-done");
+    }
 
-        // Garbage settings menu
+    createGarbageSettingsMenu() {
+        this.garbageSettingsMenu = document.querySelector("#garbage-settings-menu");
         this.cheeseLayerButton = document.querySelector(".garbage-cheese-layer-container");
         this.cheeseLayerInput = document.querySelector("#garbage-cheese-layer");
         this.APSButton = document.querySelector(".garbage-APS-container");
@@ -69,50 +77,80 @@ export default class Menu {
         this.comboBlockingButton = document.querySelector(".combo-blocking");
         this.cheesinessInput = document.querySelector("#cheesiness");
         this.garbageSettingsDoneButton = document.querySelector(".garbage-settings-done");
+    }
 
-        // Settings menu
+    createSettingsMenu() {
+        this.settingsMenu = document.querySelector("#settings-menu");
         this.controlsButton = document.querySelector(".controls-button");
         this.handlingButton = document.querySelector(".handling-button");
         this.garbageSettingsButton = document.querySelector(".garbage-settings");
         this.restoreButton = document.querySelector(".restore-button");
         this.settingsDoneButton = document.querySelector(".settings-done-button");
+    }
 
-        // In game
-        this.gameMenuButton = document.querySelector(".game-menu-button");
-        this.gameSettingsButton = document.querySelector(".game-settings-button");
-
-        // Look ahead ready menu
-        this.lookaheadPiecesBottomInput = document.querySelector("#lookahead-pieces-input");
-
-        // Control Menu
+    createControlsMenu() {
+        this.controlsMenu = document.querySelector("#controls-menu");
         this.keybindButtons = document.querySelectorAll(".keybind-option");
         this.controlsDoneButton = document.querySelector(".controls-done");
+    }
 
-        // Handling Menu
+    createHandlingMenu() {
+        this.handlingMenu = document.querySelector("#handling-menu");
         this.DASInput = document.querySelector("#DAS");
         this.ARRInput = document.querySelector("#ARR");
         this.SDFInput = document.querySelector("#SDF");
         this.handlingDoneButton = document.querySelector(".handling-done");
+    }
 
-        // Restore Menu
+    createRestoreMenu() {
+        this.restoreMenu = document.querySelector("#restore-menu");
         this.restoreDropButton = document.querySelector(".restore-on-drop");
         this.restoreMoveButton = document.querySelector(".restore-on-move");
         this.restoreDoneButton = document.querySelector(".restore-done");
+    }
 
-        // In-game edit queue menu
-        this.queueSizeInput = document.querySelector("#queue-size");
-        this.holdInput = document.querySelector("#hold-queue");
-        this.nextInput = document.querySelector("#next-queue");
-        this.editQueueDoneButton = document.querySelector(".edit-queue-done");
-
-        // Results Menu
+    createResultsMenu() {
+        this.resultsMenu = document.querySelector("#results-menu");
         this.resultItems = document.querySelectorAll(".result-item");
         this.resultsRetryButton = document.querySelector(".result-retry");
         this.resultsMenuButton = document.querySelector(".result-menu");
     }
 
-    addButtonClickEvents() {
-        // Main menu
+    createEditQueueMenu() {
+        this.editQueueMenu = document.querySelector("#edit-queue-menu");
+        this.queueSizeInput = document.querySelector("#queue-size");
+        this.holdInput = document.querySelector("#hold-queue");
+        this.nextInput = document.querySelector("#next-queue");
+        this.editQueueDoneButton = document.querySelector(".edit-queue-done");
+    }
+
+    createLookaheadReadyMenu() {
+        this.lookaheadReadyMenu = document.querySelector("#lookahead-ready-menu");
+        this.lookaheadPiecesBottomInput = document.querySelector("#lookahead-pieces-input");
+    }
+
+    createInGameElements() {
+        this.finesseTipComment = document.querySelector("#finesse-tip-comment");
+        this.gameMenuButton = document.querySelector(".game-menu-button");
+        this.gameSettingsButton = document.querySelector(".game-settings-button");
+    }
+
+    bindMenuEvents() {
+        this.bindMainMenuEvents();
+        this.bindChangeModeMenuEvents();
+        this.bindModePreferenceMenuEvents();
+        this.bindGarbageSettingsMenuEvents();
+        this.bindSettingsMenuEvents();
+        this.bindControlsMenuEvents();
+        this.bindHandlingMenuEvents();
+        this.bindRestoreMenuEvents();
+        this.bindResultsMenuEvents();
+        this.bindEditQueueMenuEvents();
+        this.bindLookaheadReadyMenuEvents();
+        this.bindInGameElementEvents();
+    }
+
+    bindMainMenuEvents() {
         this.playButton.addEventListener("click", () => {
             this.hide(this.mainMenu);
             this.activeMenu = "";
@@ -132,25 +170,29 @@ export default class Menu {
         });
 
         this.uploadButton.addEventListener("change", ev => this.loadGameFromImage(ev));
+    }
 
-        // Change mode menu
+    bindChangeModeMenuEvents() {
         this.freeButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.b2bButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.lookButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.finesseButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
         this.sprintButton.addEventListener("click", ev => this.updateGameModeFromMenu(ev.currentTarget));
+
         this.modePreferenceButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
             this.activeMenu = "modePreference";
             this.show(this.modePreferenceMenu);
         });
+
         this.changeModeDoneButton.addEventListener("click", () => {
             this.hide(this.changeModeMenu);
             this.activeMenu = "main";
             this.show(this.mainMenu);
         });
+    }
 
-        // Mode Specific Preferences
+    bindModePreferenceMenuEvents() {
         this.loadUserModePreferences();
 
         this.modeGarbageSettingsButton.addEventListener("click", ev => {
@@ -191,9 +233,11 @@ export default class Menu {
             this.activeMenu = "changeMode";
             this.show(this.changeModeMenu);
         });
+    }
 
-        // Garbage Settings menu
+    bindGarbageSettingsMenuEvents() {
         this.loadUserGarbagePreferences();
+
         this.cheeseLayerButton.addEventListener("click", ev => {
             // Clicking on a label produces two click events (one on label and second on input)
             // Prevent two events from happening if clicked on label
@@ -278,10 +322,10 @@ export default class Menu {
             this.game.cheesiness = num / 100;
         });
 
-
         this.garbageSettingsDoneButton.addEventListener("click", () => this.hideGarbageSettings());
+    }
 
-        // Settings menu
+    bindSettingsMenuEvents() {
         this.controlsButton.addEventListener("click", () => {
             this.hide(this.settingsMenu);
             this.activeMenu = "controls";
@@ -311,8 +355,97 @@ export default class Menu {
         });
 
         this.settingsDoneButton.addEventListener("click", () => this.hideSettings());
+    }
 
-        // In Game
+    bindControlsMenuEvents() {
+        for (let i = 0; i < this.keybindButtons.length; i++) {
+            this.keybindButtons[i].addEventListener("click", ev => {
+                // Allow only 1 active keybind configure at a time
+                if (this.activeKeybindButton) {
+                    this.activeKeybindButton.classList.remove("pending-user-input");
+                }
+                this.activeKeybindButton = this.keybindButtons[i];
+                this.keybindButtons[i].classList.add("pending-user-input");
+            });
+        }
+
+        this.controlsDoneButton.addEventListener("click", () => this.hideControls());
+    }
+
+    bindHandlingMenuEvents() {
+        this.DASInput.addEventListener("blur", ev => this.updateHandling(ev));
+        this.ARRInput.addEventListener("blur", ev => this.updateHandling(ev));
+        this.SDFInput.addEventListener("blur", ev => this.updateHandling(ev));
+
+        this.handlingDoneButton.addEventListener("click", ev => {
+            this.hide(this.handlingMenu);
+            this.show(this.settingsMenu);
+            this.activeMenu = "settings";
+        });
+    }
+
+    bindRestoreMenuEvents() {
+        this.loadUserRestorePreference();
+
+        this.restoreDropButton.addEventListener("click", ev => {
+            this.game.undoOnDrop = true;
+            this.restoreDropButton.classList.add("user-choice");
+            this.restoreMoveButton.classList.remove("user-choice");
+
+            if (this.controls.localStorageSupport) {
+                localStorage.setItem("restore", "drop");
+            }
+        });
+
+        this.restoreMoveButton.addEventListener("click", ev => {
+            this.game.undoOnDrop = false;
+            this.restoreMoveButton.classList.add("user-choice");
+            this.restoreDropButton.classList.remove("user-choice");
+
+            if (this.controls.localStorageSupport) {
+                localStorage.setItem("restore", "move");
+            }
+        });
+
+        this.restoreDoneButton.addEventListener("click", ev => {
+            this.hide(this.restoreMenu);
+            this.activeMenu = "settings";
+            this.show(this.settingsMenu);
+        });
+    }
+
+    bindResultsMenuEvents() {
+        // Results
+        this.resultsRetryButton.addEventListener("click", () => {
+            this.hide(this.resultsMenu);
+            this.activeMenu = "";
+            this.game.restart();
+        });
+
+        this.resultsMenuButton.addEventListener("click", () => {
+            this.hide(this.resultsMenu);
+            this.show(this.mainMenu);
+            this.activeMenu = "main";
+        });
+    }
+
+    bindEditQueueMenuEvents() {
+        this.holdInput.addEventListener("blur", ev => this.updateQueue(ev, true));
+        this.nextInput.addEventListener("blur", ev => this.updateQueue(ev, false));
+        this.queueSizeInput.addEventListener("blur", () => this.updateQueueSize());
+
+        this.editQueueDoneButton.addEventListener("click", ev => {
+            this.hide(this.editQueueMenu);
+            this.activeMenu = "";
+            this.game.play();
+        });
+    }
+
+    bindLookaheadReadyMenuEvents() {
+        this.lookaheadPiecesBottomInput.addEventListener("blur", () => this.validateAndChange());
+    }
+
+    bindInGameElementEvents() {
         this.gameMenuButton.addEventListener("click", ev => {
             // Note to future Gamers:
             // if you remove this line, there will be a bug with element being clicked when spacebar is pressed
@@ -358,82 +491,6 @@ export default class Menu {
             this.directToGame = true;
             this.show(this.settingsMenu);
             this.activeMenu = "settings";
-        });
-
-        // Lookahead ready menu
-        this.lookaheadPiecesBottomInput.addEventListener("blur", () => this.validateAndChange());
-
-        // Controls Menu
-        this.controlsDoneButton.addEventListener("click", () => this.hideControls());
-
-        for (let i = 0; i < this.keybindButtons.length; i++) {
-            this.keybindButtons[i].addEventListener("click", ev => {
-                // Allow only 1 active keybind configure at a time
-                if (this.activeKeybindButton) {
-                    this.activeKeybindButton.classList.remove("pending-user-input");
-                }
-                this.activeKeybindButton = this.keybindButtons[i];
-                this.keybindButtons[i].classList.add("pending-user-input");
-            });
-        }
-
-        // Handling
-        this.DASInput.addEventListener("blur", ev => this.updateHandling(ev));
-        this.ARRInput.addEventListener("blur", ev => this.updateHandling(ev));
-        this.SDFInput.addEventListener("blur", ev => this.updateHandling(ev));
-        this.handlingDoneButton.addEventListener("click", ev => {
-            this.hide(this.handlingMenu);
-            this.show(this.settingsMenu);
-            this.activeMenu = "settings";
-        });
-
-        // Restore (Undo / Redo) preferences
-        this.loadUserRestorePreference();
-        this.restoreDropButton.addEventListener("click", ev => {
-            this.game.undoOnDrop = true;
-            this.restoreDropButton.classList.add("user-choice");
-            this.restoreMoveButton.classList.remove("user-choice");
-
-            if (this.controls.localStorageSupport) {
-                localStorage.setItem("restore", "drop");
-            }
-        });
-        this.restoreMoveButton.addEventListener("click", ev => {
-            this.game.undoOnDrop = false;
-            this.restoreMoveButton.classList.add("user-choice");
-            this.restoreDropButton.classList.remove("user-choice");
-
-            if (this.controls.localStorageSupport) {
-                localStorage.setItem("restore", "move");
-            }
-        });
-        this.restoreDoneButton.addEventListener("click", ev => {
-            this.hide(this.restoreMenu);
-            this.activeMenu = "settings";
-            this.show(this.settingsMenu);
-        });
-
-        // Edit Queue
-        this.holdInput.addEventListener("blur", ev => this.updateQueue(ev, true));
-        this.nextInput.addEventListener("blur", ev => this.updateQueue(ev, false));
-        this.queueSizeInput.addEventListener("blur", () => this.updateQueueSize());
-        this.editQueueDoneButton.addEventListener("click", ev => {
-            this.hide(this.editQueueMenu);
-            this.activeMenu = "";
-            this.game.play();
-        });
-
-        // Results
-        this.resultsRetryButton.addEventListener("click", () => {
-            this.hide(this.resultsMenu);
-            this.activeMenu = "";
-            this.game.restart();
-        });
-
-        this.resultsMenuButton.addEventListener("click", () => {
-            this.hide(this.resultsMenu);
-            this.show(this.mainMenu);
-            this.activeMenu = "main";
         });
     }
 
@@ -871,7 +928,9 @@ export default class Menu {
         this.show(this.settingsMenu);
     }
 
-    press(key) {
+    press(ev) {
+        let key = ev.key.toLowerCase();
+
         if (this.activeKeybindButton) {
             this.controls.configureKeybind(this.activeKeybindButton.id, key);
             this.activeKeybindButton.classList.remove("pending-user-input");
@@ -887,7 +946,7 @@ export default class Menu {
             this.hide(this.lookaheadReadyMenu);
             this.game.mode.menuPause = false; // Prevent showing instructions menu twice. Already showing menu.
             this.game.play();
-            this.controls.press(key);
+            this.controls.press(ev);
             this.activeMenu = "";
         } else if (key === this.controls.keybind("Pause")) {
             this.previousScreen();

@@ -92,9 +92,8 @@ const display = new Display(game);
 const menu = new Menu(game, controls, display);
 
 document.addEventListener("keydown", ev => {
-    let key = ev.key.toLowerCase();
     if (menu.active()) {
-        menu.press(key);
+        menu.press(ev);
     } else {
         controls.press(ev);
     }
