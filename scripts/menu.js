@@ -200,21 +200,22 @@ export default class Menu {
             if (ev.target !== this.cheeseLayerButton && ev.target !== this.cheeseLayerInput) {
                 return;
             }
-            this.highlightGarbageMode(ev.currentTarget);
+            this.activateGarbageMode(ev.currentTarget);
         });
 
         this.APSButton.addEventListener("click", ev => {
             if (ev.target !== this.APSButton && ev.target !== this.APSAttackInput && ev.target !== this.APSSecondInput) {
                 return;
             }
-            this.highlightGarbageMode(ev.currentTarget);
+            this.activateGarbageMode(ev.currentTarget);
+            this.game.APS = true;
         });
 
         this.backfireButton.addEventListener("click", ev => {
             if (ev.target !== this.backfireButton && ev.target !== this.backfireInput) {
                 return;
             }
-            this.highlightGarbageMode(ev.currentTarget);
+            this.activateGarbageMode(ev.currentTarget);
         });
 
         this.comboBlockingButton.addEventListener("click", () => {
@@ -239,6 +240,7 @@ export default class Menu {
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("APSAttack", num);
+            this.game.APSAttack = num;
 
         });
 
@@ -249,6 +251,7 @@ export default class Menu {
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("APSSecond", num);
+            this.game.APSSecond = num;
 
         });
 
@@ -269,7 +272,7 @@ export default class Menu {
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("cheesiness", num);
-
+            this.game.cheesiness = num;
         });
 
 
@@ -431,7 +434,10 @@ export default class Menu {
         });
     }
 
-    highlightGarbageMode(garbageModeButton) {
+    activateGarbageMode(garbageModeButton) {
+
+        // Remove all statuses
+        this.game.APS = false;
 
         // If inactivating, simply turn off
         let status = garbageModeButton.classList.toggle("user-choice");
@@ -648,15 +654,18 @@ export default class Menu {
         }
         if (APSAttack && isFinite(APSAttack)) {
             this.APSAttackInput.value = APSAttack;
+            this.game.APSAttack = APSAttack;
         }
         if (APSSecond && isFinite(APSSecond)) {
             this.APSSecondInput.value = APSSecond;
+            this.game.APSSecond = APSSecond;
         }
         if (backfireRate && isFinite(backfireRate)) {
             this.backfireInput.value = backfireRate;
         }
         if (cheesiness && isFinite(cheesiness)) {
             this.cheesinessInput.value = cheesiness;
+            this.game.cheesiness = cheesiness;
         }
         if (comboBlocking) {
             this.comboBlockingButton.classList.add("user-choice");

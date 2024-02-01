@@ -23,6 +23,8 @@ export default class Game {
 
         this.fillPieceType = "g";
 
+        this.APS = false;
+
     }
 
     new(fromMenu = false) {
@@ -107,7 +109,7 @@ export default class Game {
         }
 
         if (move.type === "attack") {
-            this.receiveLines(move.amount);
+            this.receiveAttack(move.amount);
         }
 
         return false;
@@ -187,6 +189,9 @@ export default class Game {
         } else {
             this.updateStartTime();
         }
+
+        // Applies when player has Attack Per Second (APS) garbage enabled
+        this.startAPS();
     }
 
     updateMode(type) {
@@ -247,12 +252,16 @@ export default class Game {
         } else {
             this.timeElapsed = 0;
         }
+
+        this.stopAPS();
     }
 
     restart(save = false) {
         if (save) {
             this.saveState("restart");
         }
+
+        this.stopAPS();
         this.new();
         this.lastMove = "restart";
 
@@ -286,6 +295,21 @@ export default class Game {
     updateStartTime() {
         this.startTime = Date.now() - this.timeElapsed;
         this.displayStartTimer = true;
+    }
+
+    startAPS() {
+        // Check if enabled and only allow in sandbox mode
+        if (!this.APS || !this.sandbox()) {
+            return;
+        }
+
+        this.APSInterval = setInterval(() => {
+            this.receiveAttack(this.APSAttack);
+        }, this.APSSecond * 1000);
+    }
+
+    stopAPS() {
+        clearInterval(this.APSInterval);
     }
 
     shift(x, y) {
@@ -652,8 +676,8 @@ export default class Game {
         this.updatedGameOver = true;
     }
 
-    receiveLines(amount) {
-        this.grid.queueGarbage(amount, 0);
+    receiveAttack(amount) {
+        this.grid.queueGarbage(amount, this.cheesiness);
         this.updatedGarbage = true;
     }
 
