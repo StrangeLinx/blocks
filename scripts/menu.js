@@ -207,16 +207,14 @@ export default class Menu {
             if (ev.target !== this.APSButton && ev.target !== this.APSAttackInput && ev.target !== this.APSSecondInput) {
                 return;
             }
-            let status = this.toggleGarbageMode(ev.currentTarget);
-            this.game.APS = status;
+            this.toggleGarbageMode(ev.currentTarget);
         });
 
         this.backfireButton.addEventListener("click", ev => {
             if (ev.target !== this.backfireButton && ev.target !== this.backfireInput) {
                 return;
             }
-            let status = this.toggleGarbageMode(ev.currentTarget);
-            this.game.backfire = status;
+            this.toggleGarbageMode(ev.currentTarget);
         });
 
         this.comboBlockingButton.addEventListener("click", () => {
@@ -227,12 +225,13 @@ export default class Menu {
 
 
         this.cheeseLayerInput.addEventListener("blur", ev => {
-            // Only allow integer in range [1, 20]
-            if (!this.validGarbageInput(ev, true, 1, 20)) {
+            // Only allow integer in range [0, 20]
+            if (!this.validGarbageInput(ev, true, 0, 20)) {
                 return;
             }
             let num = Number(ev.currentTarget.value);
             this.saveGarbagePreference("cheeseLayer", num);
+            this.game.cheeseLayer = num;
         });
 
         this.APSAttackInput.addEventListener("blur", ev => {
@@ -258,8 +257,8 @@ export default class Menu {
         });
 
         this.backfireInput.addEventListener("blur", ev => {
-            // range [0.01, 20]
-            if (!this.validGarbageInput(ev, false, 0.01, 20)) {
+            // range [0, 20]
+            if (!this.validGarbageInput(ev, false, 0, 20)) {
                 return;
             }
             let num = Number(ev.currentTarget.value);
@@ -439,6 +438,7 @@ export default class Menu {
     toggleGarbageMode(garbageModeButton) {
 
         // Remove all statuses
+        this.game.cheeseLayerActive = false;
         this.game.APS = false;
         this.game.backfire = false;
 
@@ -448,14 +448,15 @@ export default class Menu {
             return false;
         }
 
-        // Else activating mode
-
         // If another option was active remove status
         this.cheeseLayerButton.classList.remove("user-choice");
         this.APSButton.classList.remove("user-choice");
         this.backfireButton.classList.remove("user-choice");
 
+        // Activate mode
         garbageModeButton.classList.add("user-choice");
+        this.game[garbageModeButton.id] = true;
+
         return true;
     }
 

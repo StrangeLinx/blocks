@@ -24,6 +24,7 @@ export default class Game {
         this.fillPieceType = "g";
 
         // Garbage settings
+        this.cheeseLayerActive = false;
         this.APS = false;
         this.comboBlocking = false;
         this.backfire = false;
